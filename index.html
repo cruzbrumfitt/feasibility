@@ -3,539 +3,901 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Simple Land Value Calculator</title>
+  <title>Land Value Calculator</title>
   <style>
     :root {
-      --bg: #ffffff;
-      --panel: #ffffff;
-      --ink: #000;
-      --muted: #333;
-      --line: #888;
-      --warning: #000;
+      --bg: #f5f5f5;
+      --panel-light: #ffffff;
+      --panel-dark: #1a1a1a;
+      --ink: #111111;
+      --ink-light: #ffffff;
+      --muted: #666666;
+      --muted-light: #a0a0a0;
+      --line: #e0e0e0;
+      --line-dark: #333333;
+      --accent: #d4a853;
+      --accent-hover: #c49843;
       --shadow: rgba(0, 0, 0, 0.08);
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--ink);
-      background: #ffffff;
+      background: var(--bg);
       min-height: 100vh;
+      line-height: 1.5;
     }
 
     .app {
-      width: min(1200px, 94vw);
-      margin: 28px auto;
-      display: grid;
-      gap: 16px;
+      width: min(1280px, 96vw);
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 700px;
+    }
+
+    .header a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    .header a:hover {
+      text-decoration: underline;
     }
 
     .layout {
       display: grid;
-      gap: 16px;
-      grid-template-columns: minmax(300px, 0.95fr) minmax(360px, 1.2fr);
+      gap: 24px;
+      grid-template-columns: minmax(320px, 420px) minmax(400px, 1fr);
       align-items: start;
     }
 
+    /* Left Panel - Inputs */
+    .inputs-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
     .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      box-shadow: 0 10px 28px var(--shadow);
-      padding: 18px;
+      background: var(--panel-light);
+      border-radius: 4px;
+      box-shadow: 0 1px 3px var(--shadow);
+      padding: 20px;
     }
 
-    .inputs {
-      display: grid;
-      gap: 14px;
-    }
-
-    fieldset {
-      margin: 0;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      display: grid;
-      gap: 10px;
-    }
-
-    legend {
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      padding: 0 6px;
-    }
-
-    .row {
-      display: grid;
-      gap: 8px;
-      grid-template-columns: 1.1fr 0.9fr;
-      align-items: center;
-    }
-
-    .row label {
-      font-size: 0.91rem;
+    .panel-title {
+      font-size: 0.85rem;
+      font-weight: 600;
       color: var(--ink);
+      margin-bottom: 16px;
     }
 
-    .row input,
-    .row select {
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .input-row label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .input-row input,
+    .input-row select {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #ffffff;
-      padding: 7px 9px;
+      border-radius: 4px;
+      background: var(--panel-light);
+      padding: 10px 12px;
+      font-size: 1rem;
+      color: var(--ink);
+      transition: border-color 0.15s ease;
+    }
+
+    .input-row input:focus,
+    .input-row select:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+
+    .input-row select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    /* Button Group */
+    .button-group {
+      display: flex;
+      gap: 0;
+    }
+
+    .button-group button {
+      flex: 1;
+      padding: 10px 8px;
+      border: 1px solid var(--line);
+      background: var(--panel-light);
+      color: var(--ink);
       font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .button-group button:first-child {
+      border-radius: 4px 0 0 4px;
+    }
+
+    .button-group button:last-child {
+      border-radius: 0 4px 4px 0;
+    }
+
+    .button-group button:not(:first-child) {
+      border-left: none;
+    }
+
+    .button-group button:hover {
+      background: var(--bg);
+    }
+
+    .button-group button.active {
+      background: var(--ink);
+      color: var(--ink-light);
+      border-color: var(--ink);
+    }
+
+    .button-group button.active + button {
+      border-left: 1px solid var(--ink);
+    }
+
+    .link-button {
+      background: none;
+      border: none;
+      color: #0066cc;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 8px;
+    }
+
+    .link-button:hover {
+      text-decoration: underline;
+    }
+
+    .link-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      text-decoration: none;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Collapsible Sections - Light Theme */
+    .collapsible-light {
+      border-top: 1px solid var(--line);
+      margin-top: 0;
+      padding-top: 0;
+    }
+
+    .collapsible-light .collapsible-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      cursor: pointer;
+    }
+
+    .collapsible-light .collapsible-header h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
       color: var(--ink);
     }
 
-    .row input:focus,
-    .row select:focus {
-      outline: 2px solid rgba(0, 0, 0, 0.2);
-      border-color: #000;
+    .collapsible-light .collapsible-header .toggle {
+      color: var(--muted);
+      font-size: 1rem;
+      transition: transform 0.2s ease;
     }
 
-    .actions {
-      display: flex;
-      justify-content: flex-start;
-      margin-top: 4px;
+    .collapsible-light.open .toggle {
+      transform: rotate(180deg);
     }
 
-    button {
-      border: 1px solid #000;
-      background: #ffffff;
-      color: #000;
-      padding: 8px 12px;
-      border-radius: 9px;
-      font-weight: 700;
-      font-size: 0.86rem;
-      cursor: pointer;
-      transition: transform 120ms ease;
+    .collapsible-light .collapsible-content {
+      display: none;
+      padding-bottom: 8px;
     }
 
-    button:hover {
-      transform: translateY(-1px);
+    .collapsible-light.open .collapsible-content {
+      display: block;
     }
 
-    .outputs {
-      display: grid;
-      gap: 14px;
-    }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .collapsible-light .input-group {
       gap: 10px;
     }
 
-    .metric {
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #ffffff;
-      padding: 10px;
-      display: grid;
-      gap: 4px;
+    .collapsible-light .input-row label {
+      font-size: 0.75rem;
     }
 
-    .metric .label {
-      color: var(--muted);
-      font-size: 0.78rem;
-      letter-spacing: 0.02em;
+    .collapsible-light .input-row input {
+      padding: 8px 10px;
+      font-size: 0.9rem;
     }
 
-    .metric .value {
-      font-size: 1.08rem;
+    /* Right Panel - Dark Results */
+    .results-panel {
+      background: var(--panel-dark);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .results-content {
+      padding: 24px;
+    }
+
+    .results-header {
+      margin-bottom: 20px;
+    }
+
+    .results-header h2 {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--ink-light);
+      margin-bottom: 8px;
+    }
+
+    .main-value {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .main-value .amount {
+      font-size: 2.5rem;
       font-weight: 700;
-      line-height: 1.2;
+      color: var(--accent);
     }
 
-    .metric .value.danger {
-      color: var(--warning);
+    .results-table {
+      margin-top: 12px;
     }
 
-    .warnings {
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 10px;
+    .results-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line-dark);
+    }
+
+    .results-row:last-child {
+      border-bottom: none;
+    }
+
+    .results-row .label {
       font-size: 0.85rem;
-      background: #ffffff;
+      color: var(--muted-light);
+    }
+
+    .results-row .value {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink-light);
+    }
+
+    .results-row.highlight .label,
+    .results-row.highlight .value {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .results-row.subtotal {
+      background: rgba(255,255,255,0.05);
+      margin: 0 -24px;
+      padding: 8px 24px;
+    }
+
+    .results-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line-dark);
+    }
+
+    .pdf-export {
+      background: var(--panel-dark);
+      color: var(--ink-light);
+      padding: 24px;
+    }
+
+    .pdf-export .results-header,
+    .pdf-export .results-section-title,
+    .pdf-export .results-table,
+    .pdf-export .results-row {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .pdf-export .results-row.subtotal {
+      background: rgba(255,255,255,0.08);
+      margin: 0;
+      padding: 8px 0;
+    }
+
+    /* Slider Section */
+    .slider-section {
+      margin-top: 8px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .slider-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .slider-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .slider-container {
+      margin: 12px 0 8px;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(to right, var(--accent) var(--slider-progress, 50%), var(--line) var(--slider-progress, 50%));
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .slider-range {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* Warnings */
+    .warnings {
+      margin-top: 16px;
+      padding: 12px;
+      background: #3d2020;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: #ff9999;
       display: none;
-      gap: 4px;
     }
 
     .warnings.show {
-      display: grid;
+      display: block;
     }
 
-    .table-wrap {
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      overflow: hidden;
-      background: #ffffff;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.89rem;
-    }
-
-    th,
-    td {
-      padding: 8px 10px;
-      border-bottom: 1px solid #ccc;
-      vertical-align: top;
-    }
-
-    th {
-      width: 72%;
-      text-align: left;
-      font-weight: 600;
-      color: #000;
-      background: #ffffff;
-    }
-
-    td {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    tr.group th {
-      background: #ffffff;
-      color: #000;
-      font-weight: 800;
-      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
+    .disclaimer {
+      margin-top: 16px;
+      padding: 0;
+      color: var(--muted);
       font-size: 0.8rem;
+      text-align: center;
     }
 
-    tr.final th,
-    tr.final td {
-      font-weight: 800;
-      font-size: 0.96rem;
-      background: #ffffff;
-    }
-
-    @media (max-width: 1020px) {
+    /* Responsive */
+    @media (max-width: 900px) {
       .layout {
         grid-template-columns: 1fr;
       }
+
+      .app {
+        padding: 16px;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
     }
 
-    @media (max-width: 720px) {
-      .card-grid {
-        grid-template-columns: 1fr;
+    @media (max-width: 500px) {
+      .button-group {
+        flex-wrap: wrap;
       }
 
-      .row {
-        grid-template-columns: 1fr;
+      .button-group button {
+        flex: 0 0 calc(50% - 0px);
       }
 
-      th,
-      td {
-        padding: 7px 8px;
+      .button-group button:nth-child(2) {
+        border-radius: 0 4px 0 0;
+      }
+
+      .button-group button:nth-child(3) {
+        border-radius: 0 0 0 4px;
+        border-left: 1px solid var(--line);
+        border-top: none;
+      }
+
+      .button-group button:nth-child(4) {
+        border-radius: 0 0 4px 0;
+        border-top: none;
+      }
+
+      .button-group button:nth-child(5) {
+        border-radius: 0 0 0 4px;
+        border-left: 1px solid var(--line);
+        border-top: none;
+      }
+
+      .main-value .amount {
+        font-size: 2rem;
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+
+      body {
+        background: #ffffff;
+        color: #000000;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .app {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .header p,
+      .inputs-wrapper,
+      .warnings {
+        display: none !important;
+      }
+
+      .layout {
+        display: block;
+      }
+
+      .results-panel {
+        background: #ffffff;
+        border: 1px solid #dddddd;
+        box-shadow: none;
+      }
+
+      .results-content {
+        padding: 16px;
+      }
+
+      .results-header h2,
+      .results-section-title,
+      .results-row .label,
+      .results-row .value,
+      .main-value .amount {
+        color: #000000 !important;
+      }
+
+      .results-row.highlight .label,
+      .results-row.highlight .value {
+        color: #000000 !important;
+      }
+
+      .results-section-title,
+      .results-row {
+        border-color: #dddddd;
+      }
+
+      .results-row.subtotal {
+        background: #f5f5f5;
+        margin: 0;
+        padding: 8px 0;
       }
     }
   </style>
 </head>
 <body>
   <main class="app">
+    <header class="header">
+      <h1>Land Value Calculator</h1>
+      <p>Use this calculator to determine the residual land value for development projects.</p>
+    </header>
+
     <section class="layout">
-      <form class="panel inputs" id="inputs">
-        <fieldset>
-          <legend>Project Basics</legend>
-          <div class="row">
-            <label for="landSizeHa">Land Size (ha)</label>
-            <input id="landSizeHa" name="landSizeHa" type="number" min="0" step="0.01">
+      <!-- Left Column - All Inputs -->
+      <div class="inputs-wrapper">
+        <div class="panel">
+          <div class="panel-title">GST Mode</div>
+          <div class="button-group" id="gstModeButtons">
+            <button type="button" class="active" data-value="margin">Margin Scheme</button>
+            <button type="button" data-value="gst">Standard GST</button>
           </div>
-          <div class="row">
-            <label for="developablePct">Developable Area (%)</label>
-            <input id="developablePct" name="developablePct" type="number" min="0" max="100" step="0.01">
-          </div>
-          <div class="row">
-            <label for="minimumLotSqm">Minimum Lot Size (sqm)</label>
-            <input id="minimumLotSqm" name="minimumLotSqm" type="number" min="1" step="1">
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Sales and GST</legend>
-          <div class="row">
-            <label for="gstMode">GST Mode</label>
-            <select id="gstMode" name="gstMode">
-              <option value="margin">Margin Scheme</option>
-              <option value="gst">GST</option>
-            </select>
-          </div>
-          <div class="row">
-            <label for="salePricePerLot">Sale Price per Lot (incl GST)</label>
-            <input id="salePricePerLot" name="salePricePerLot" type="number" min="0" step="0.01">
-          </div>
-          <div class="row" id="marginPurchasePriceRow">
-            <label for="marginPurchasePrice">Purchase Price for Margin GST</label>
-            <input id="marginPurchasePrice" name="marginPurchasePrice" type="number" min="0" step="0.01">
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Selling Costs</legend>
-          <div class="row">
-            <label for="titlesLegalsPerLot">Titles and Legals per Lot</label>
-            <input id="titlesLegalsPerLot" name="titlesLegalsPerLot" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="marketingPct">Marketing Allowance (%)</label>
-            <input id="marketingPct" name="marketingPct" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="agentsPct">Agents Commissions (%)</label>
-            <input id="agentsPct" name="agentsPct" type="number" min="0" step="0.01">
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Margin and Cost Stack</legend>
-          <div class="row">
-            <label for="targetMarginPct">Target Development Margin (%)</label>
-            <input id="targetMarginPct" name="targetMarginPct" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="constructionCost">Construction Costs</label>
-            <input id="constructionCost" name="constructionCost" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="contingencyPct">Construction Contingency (%)</label>
-            <input id="contingencyPct" name="contingencyPct" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="professionalFees">Professional Fees</label>
-            <input id="professionalFees" name="professionalFees" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="headworksCharges">Council Headworks / Infrastructure</label>
-            <input id="headworksCharges" name="headworksCharges" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="councilFees">Council Fees</label>
-            <input id="councilFees" name="councilFees" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="acquisitionCosts">Acquisition Costs</label>
-            <input id="acquisitionCosts" name="acquisitionCosts" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="ratesTaxes">Rates and Taxes</label>
-            <input id="ratesTaxes" name="ratesTaxes" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="interestFinanceCosts">Interest / Finance Costs</label>
-            <input id="interestFinanceCosts" name="interestFinanceCosts" type="number" min="0" step="0.01">
-          </div>
-          <div class="row">
-            <label for="gstReclaimed">GST Reclaimed (Add Back)</label>
-            <input id="gstReclaimed" name="gstReclaimed" type="number" min="0" step="0.01">
-          </div>
-        </fieldset>
-
-        <div class="actions">
-          <button type="button" id="resetDefaults">Reset to PDF Defaults</button>
-        </div>
-      </form>
-
-      <section class="panel outputs">
-        <div class="card-grid">
-          <article class="metric">
-            <span class="label">Residual Land Value (DA Approved, Ex GST)</span>
-            <span class="value" id="outLandValue">$0</span>
-          </article>
-          <article class="metric">
-            <span class="label">Development Profit</span>
-            <span class="value" id="outProfit">$0</span>
-          </article>
-          <article class="metric">
-            <span class="label">Development Margin</span>
-            <span class="value" id="outMargin">0%</span>
-          </article>
+          <input type="hidden" id="gstMode" value="margin">
         </div>
 
-        <div class="warnings" id="warnings"></div>
-
-        <div class="table-wrap">
-          <table>
-            <tbody>
-              <tr class="final">
-                <th>Project Overview</th>
-                <td></td>
-              </tr>
-              <tr>
-                <th>Land Size (ha)</th>
-                <td id="outLandSizeHa">0</td>
-              </tr>
-              <tr>
-                <th>Developable Area (ha)</th>
-                <td id="outDevelopableArea">0</td>
-              </tr>
-              <tr>
-                <th>Calculated Lots (from area + lot size)</th>
-                <td id="outTotalLots">0</td>
-              </tr>
-              <tr>
-                <th>Sale Price per Lot (incl GST)</th>
-                <td id="outSalePricePerLot">$0</td>
-              </tr>
-
-              <tr class="final">
-                <th>Cashflow Feasibility</th>
-                <td></td>
-              </tr>
-              <tr>
-                <th>Gross Realisation (incl GST)</th>
-                <td id="outGrossRealisation">$0</td>
-              </tr>
-              <tr>
-                <th>Titles and Legals</th>
-                <td id="outTitlesLegals">$0</td>
-              </tr>
-              <tr>
-                <th>Marketing and Commissions</th>
-                <td id="outMarketingCommissions">$0</td>
-              </tr>
-              <tr>
-                <th>GST Sales Remittance</th>
-                <td id="outGstSalesRemittance">$0</td>
-              </tr>
-              <tr>
-                <th>Total Selling Costs</th>
-                <td id="outSellingCostsTotal">$0</td>
-              </tr>
-              <tr>
-                <th>Net Realisation</th>
-                <td id="outNetRealisation">$0</td>
-              </tr>
-              <tr>
-                <th>Margin for Profit and Risk</th>
-                <td id="outMarginForRisk">$0</td>
-              </tr>
-              <tr>
-                <th>Balance After Risk Margin</th>
-                <td id="outAfterRisk">$0</td>
-              </tr>
-              <tr>
-                <th>Construction Costs (incl contingency + fees)</th>
-                <td id="outConstructionCostsTotal">$0</td>
-              </tr>
-              <tr>
-                <th>Balance After Construction</th>
-                <td id="outAfterConstruction">$0</td>
-              </tr>
-              <tr>
-                <th>Purchase and Holding Costs</th>
-                <td id="outPurchaseHoldingTotal">$0</td>
-              </tr>
-              <tr>
-                <th>Balance After Purchase / Holding</th>
-                <td id="outAfterPurchaseHolding">$0</td>
-              </tr>
-              <tr>
-                <th>Interest / Finance Costs</th>
-                <td id="outInterestFinance">$0</td>
-              </tr>
-              <tr>
-                <th>Balance After Interest</th>
-                <td id="outAfterFinance">$0</td>
-              </tr>
-              <tr>
-                <th>GST Reclaimed (add back)</th>
-                <td id="outGstReclaimed">$0</td>
-              </tr>
-              <tr class="final">
-                <th>Residual Land Value (DA Approved, Ex GST)</th>
-                <td id="outIndicativeValue">$0</td>
-              </tr>
-
-              <tr class="group">
-                <th>Key Ratios</th>
-                <td></td>
-              </tr>
-              <tr>
-                <th id="outGrossExLabel">Gross Realisation Ex GST (Selected Mode)</th>
-                <td id="outGrossExSelected">$0</td>
-              </tr>
-              <tr>
-                <th>Development Profit per Lot</th>
-                <td id="outProfitPerLot">$0</td>
-              </tr>
-              <tr>
-                <th>Break-even Sale Price per Lot (target margin)</th>
-                <td id="outBreakEvenSalePerLot">$0</td>
-              </tr>
-              <tr>
-                <th>Adopted Value per Hectare</th>
-                <td id="outValuePerHectare">$0</td>
-              </tr>
-              <tr>
-                <th>Adopted Value per Lot</th>
-                <td id="outValuePerLot">$0</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="panel">
+          <div class="panel-title">Project Type</div>
+          <div class="input-group">
+            <div class="input-row">
+              <select id="projectType">
+                <option value="residential">Residential Subdivision</option>
+                <option value="commercial">Commercial Development</option>
+                <option value="mixed">Mixed Use</option>
+              </select>
+            </div>
+          </div>
         </div>
-      </section>
+
+        <div class="panel">
+          <div class="panel-title">Land Details</div>
+          <div class="input-group">
+            <div class="input-row">
+              <label for="landSizeHa">Land Size (ha)</label>
+              <input id="landSizeHa" name="landSizeHa" type="number" min="0" step="0.01">
+            </div>
+            <div class="input-row">
+              <label for="developablePct">Developable Area (%)</label>
+              <input id="developablePct" name="developablePct" type="number" min="0" max="100" step="0.01">
+            </div>
+            <div class="input-row">
+              <label for="minimumLotSqm">Minimum Lot Size (sqm)</label>
+              <input id="minimumLotSqm" name="minimumLotSqm" type="number" min="1" step="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Sale Price per Lot</div>
+          <div class="input-group">
+            <div class="input-row">
+              <label for="salePricePerLot">Price including GST ($)</label>
+              <input id="salePricePerLot" name="salePricePerLot" type="number" min="0" step="0.01">
+            </div>
+            <div class="input-row" id="marginPurchasePriceRow">
+              <label for="marginPurchasePrice">Purchase Price for Margin GST ($)</label>
+              <input id="marginPurchasePrice" name="marginPurchasePrice" type="number" min="0" step="0.01">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Target Margin</div>
+          <div class="button-group" id="marginButtons">
+            <button type="button" data-value="15">15%</button>
+            <button type="button" data-value="20">20%</button>
+            <button type="button" class="active" data-value="22.46">22.5%</button>
+            <button type="button" data-value="25">25%</button>
+            <button type="button" data-value="30">30%</button>
+          </div>
+          <input type="hidden" id="targetMarginPct" value="22.46">
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Construction Cost</div>
+          <div class="slider-section">
+            <div class="slider-header">
+              <span class="slider-label">Base Construction Cost</span>
+              <span class="slider-value" id="constructionDisplay">$0</span>
+            </div>
+            <div class="slider-container">
+              <input type="range" class="slider" id="constructionSlider" min="0" max="20000000" step="50000" value="0">
+            </div>
+            <div class="slider-range">
+              <span>$0</span>
+              <span>$20,000,000</span>
+            </div>
+            <input type="hidden" id="constructionCostInput" value="0">
+          </div>
+          <div class="input-group" style="margin-top: 12px;">
+            <div class="input-row">
+              <label for="contingencyPct">Contingency (%)</label>
+              <input id="contingencyPct" name="contingencyPct" type="number" min="0" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Options - Collapsible -->
+        <div class="panel">
+          <div class="collapsible-light" id="advancedOptions">
+            <div class="collapsible-header">
+              <h3>Advanced Options</h3>
+              <span class="toggle">&#9660;</span>
+            </div>
+            <div class="collapsible-content">
+              <div class="input-group">
+                <div class="input-row">
+                  <label for="titlesLegalsPerLot">Titles & Legals per Lot ($)</label>
+                  <input id="titlesLegalsPerLot" name="titlesLegalsPerLot" type="number" min="0" step="100">
+                </div>
+                <div class="input-row">
+                  <label for="marketingPct">Marketing Allowance (%)</label>
+                  <input id="marketingPct" name="marketingPct" type="number" min="0" step="0.1">
+                </div>
+                <div class="input-row">
+                  <label for="agentsPct">Agent Commission (%)</label>
+                  <input id="agentsPct" name="agentsPct" type="number" min="0" step="0.1">
+                </div>
+                <div class="input-row">
+                  <label for="professionalFees">Professional Fees ($)</label>
+                  <input id="professionalFees" name="professionalFees" type="number" min="0" step="1000">
+                </div>
+                <div class="input-row">
+                  <label for="headworksCharges">Council Headworks ($)</label>
+                  <input id="headworksCharges" name="headworksCharges" type="number" min="0" step="1000">
+                </div>
+                <div class="input-row">
+                  <label for="councilFees">Council Fees ($)</label>
+                  <input id="councilFees" name="councilFees" type="number" min="0" step="1000">
+                </div>
+                <div class="input-row">
+                  <label for="acquisitionCosts">Acquisition Costs ($)</label>
+                  <input id="acquisitionCosts" name="acquisitionCosts" type="number" min="0" step="1000">
+                </div>
+                <div class="input-row">
+                  <label for="ratesTaxes">Rates & Taxes ($)</label>
+                  <input id="ratesTaxes" name="ratesTaxes" type="number" min="0" step="1000">
+                </div>
+                <div class="input-row">
+                  <label for="interestFinanceCosts">Interest / Finance ($)</label>
+                  <input id="interestFinanceCosts" name="interestFinanceCosts" type="number" min="0" step="1000">
+                </div>
+                <div class="input-row">
+                  <label for="gstReclaimed">GST Reclaimed ($)</label>
+                  <input id="gstReclaimed" name="gstReclaimed" type="number" min="0" step="1000">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button type="button" class="link-button" id="resetDefaults">Reset</button>
+          <button type="button" class="link-button" id="downloadPdf">Download PDF</button>
+        </div>
+      </div>
+
+      <!-- Right Column - Results -->
+      <div class="results-panel">
+        <div class="results-content" id="resultsContent">
+          <div class="results-header">
+            <h2>Residual Land Value (DA Approved, Ex GST)</h2>
+            <div class="main-value">
+              <span class="amount" id="outLandValue">$0</span>
+            </div>
+          </div>
+
+          <div class="results-section-title">Project Overview</div>
+          <div class="results-table">
+            <div class="results-row">
+              <span class="label">Land Size</span>
+              <span class="value" id="outLandSizeHa">0 ha</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Developable Area</span>
+              <span class="value" id="outDevelopableArea">0 ha</span>
+            </div>
+            <div class="results-row">
+              <span class="label" id="outTotalLotsLabel">Calculated Lots (from area + lot size)</span>
+              <span class="value" id="outTotalLots">0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Sale Price per Lot (incl GST)</span>
+              <span class="value" id="outSalePricePerLot">$0</span>
+            </div>
+          </div>
+
+          <div class="results-section-title">Cashflow Feasibility</div>
+          <div class="results-table">
+            <div class="results-row">
+              <span class="label">Gross Realisation (incl GST)</span>
+              <span class="value" id="outGrossRealisation">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Titles and Legals</span>
+              <span class="value" id="outTitlesLegals">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Marketing and Commissions</span>
+              <span class="value" id="outMarketingCommissions">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">GST Sales Remittance</span>
+              <span class="value" id="outGstSalesRemittance">$0</span>
+            </div>
+            <div class="results-row subtotal">
+              <span class="label">Total Selling Costs</span>
+              <span class="value" id="outSellingCostsTotal">$0</span>
+            </div>
+            <div class="results-row highlight">
+              <span class="label">Net Realisation</span>
+              <span class="value" id="outNetRealisation">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Margin for Profit and Risk</span>
+              <span class="value" id="outMarginForRisk">$0</span>
+            </div>
+            <div class="results-row subtotal">
+              <span class="label">Balance After Risk Margin</span>
+              <span class="value" id="outAfterRisk">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Construction Costs (incl contingency + fees)</span>
+              <span class="value" id="outConstructionCostsTotal">$0</span>
+            </div>
+            <div class="results-row subtotal">
+              <span class="label">Balance After Construction</span>
+              <span class="value" id="outAfterConstruction">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Purchase and Holding Costs</span>
+              <span class="value" id="outPurchaseHoldingTotal">$0</span>
+            </div>
+            <div class="results-row subtotal">
+              <span class="label">Balance After Purchase / Holding</span>
+              <span class="value" id="outAfterPurchaseHolding">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Interest / Finance Costs</span>
+              <span class="value" id="outInterestFinance">$0</span>
+            </div>
+            <div class="results-row subtotal">
+              <span class="label">Balance After Interest</span>
+              <span class="value" id="outAfterFinance">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">GST Reclaimed (add back)</span>
+              <span class="value" id="outGstReclaimedDisplay">$0</span>
+            </div>
+            <div class="results-row highlight">
+              <span class="label">Residual Land Value (DA Approved, Ex GST)</span>
+              <span class="value" id="outIndicativeValue">$0</span>
+            </div>
+          </div>
+
+          <div class="results-section-title">Key Ratios</div>
+          <div class="results-table">
+            <div class="results-row">
+              <span class="label" id="outGrossExLabel">Gross Realisation Ex GST (Margin Scheme)</span>
+              <span class="value" id="outGrossExSelected">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Feasibility Surplus (before land)</span>
+              <span class="value" id="outProfit">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Feasibility Margin on Cost</span>
+              <span class="value" id="outMargin">0%</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Surplus per Lot (before land)</span>
+              <span class="value" id="outProfitPerLot">$0</span>
+            </div>
+            <div class="results-row">
+              <span class="label">Break-even Sale Price per Lot (target margin)</span>
+              <span class="value" id="outBreakEvenSalePerLot">$0</span>
+            </div>
+            <div class="results-row highlight">
+              <span class="label">Adopted Value per Hectare</span>
+              <span class="value" id="outValuePerHectare">$0</span>
+            </div>
+            <div class="results-row highlight">
+              <span class="label">Adopted Value per Lot</span>
+              <span class="value" id="outValuePerLot">$0</span>
+            </div>
+          </div>
+
+          <div class="warnings" id="warnings"></div>
+        </div>
+      </div>
     </section>
+
+    <footer class="disclaimer">
+      This calculator provides general information only and does not constitute financial, tax, legal, or investment advice. Obtain independent professional advice before making decisions.
+    </footer>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    const pdfDefaults = {
-      landSizeHa: 55,
-      developablePct: 75,
-      minimumLotSqm: 750,
-      salePricePerLot: 364909.09,
+    const STORAGE_KEY = "landValueCalculatorStateV1";
+
+    const clearedDefaults = {
+      projectType: "residential",
+      landSizeHa: "",
+      developablePct: "",
+      minimumLotSqm: "",
+      salePricePerLot: "",
       gstMode: "margin",
-      marginPurchasePrice: 1200000,
-      titlesLegalsPerLot: 2100,
-      marketingPct: 1,
-      agentsPct: 2.5,
+      marginPurchasePrice: "",
+      titlesLegalsPerLot: "",
+      marketingPct: "",
+      agentsPct: "",
       targetMarginPct: 22.46,
-      constructionCost: 4950000,
-      contingencyPct: 20,
-      professionalFees: 950950,
-      headworksCharges: 1060128,
-      councilFees: 30000,
-      acquisitionCosts: 318379,
-      ratesTaxes: 59636,
-      interestFinanceCosts: 1658445,
-      gstReclaimed: 704708
+      constructionCostInput: 0,
+      contingencyPct: "",
+      professionalFees: "",
+      headworksCharges: "",
+      councilFees: "",
+      acquisitionCosts: "",
+      ratesTaxes: "",
+      interestFinanceCosts: "",
+      gstReclaimed: ""
     };
 
-    const zeroDefaults = {
-      landSizeHa: 0,
-      developablePct: 0,
-      minimumLotSqm: 0,
-      salePricePerLot: 0,
-      gstMode: "margin",
-      marginPurchasePrice: 0,
-      titlesLegalsPerLot: 0,
-      marketingPct: 0,
-      agentsPct: 0,
-      targetMarginPct: 0,
-      constructionCost: 0,
-      contingencyPct: 0,
-      professionalFees: 0,
-      headworksCharges: 0,
-      councilFees: 0,
-      acquisitionCosts: 0,
-      ratesTaxes: 0,
-      interestFinanceCosts: 0,
-      gstReclaimed: 0
-    };
+    const persistedFieldIds = Object.keys(clearedDefaults);
 
-    const ids = Object.keys(pdfDefaults);
     const currencyFmt = new Intl.NumberFormat("en-AU", {
       style: "currency",
       currency: "AUD",
@@ -545,18 +907,59 @@
       maximumFractionDigits: 2
     });
     const GST_RATE = 0.10;
+    const PROJECT_TYPE_PROFILES = {
+      residential: {
+        name: "Residential Subdivision",
+        lotYieldFactor: 1.00,
+        sellingCostMultiplier: 1.00,
+        constructionCostMultiplier: 1.00,
+        softCostMultiplier: 1.00,
+        financeCostMultiplier: 1.00,
+        targetMarginBuffer: 0.00
+      },
+      commercial: {
+        name: "Commercial Development",
+        lotYieldFactor: 0.90,
+        sellingCostMultiplier: 1.05,
+        constructionCostMultiplier: 1.15,
+        softCostMultiplier: 1.10,
+        financeCostMultiplier: 1.10,
+        targetMarginBuffer: 0.02
+      },
+      mixed: {
+        name: "Mixed Use",
+        lotYieldFactor: 0.95,
+        sellingCostMultiplier: 1.03,
+        constructionCostMultiplier: 1.08,
+        softCostMultiplier: 1.05,
+        financeCostMultiplier: 1.05,
+        targetMarginBuffer: 0.01
+      }
+    };
+
+    function getProjectTypeProfile(projectType) {
+      return PROJECT_TYPE_PROFILES[projectType] || PROJECT_TYPE_PROFILES.residential;
+    }
 
     function byId(id) {
       return document.getElementById(id);
     }
 
     function readNumber(id) {
-      const value = Number.parseFloat(byId(id).value);
+      const el = byId(id);
+      if (!el) return 0;
+      const value = Number.parseFloat(el.value);
       return Number.isFinite(value) ? value : 0;
     }
 
+    function clamp(value, min, max) {
+      if (!Number.isFinite(value)) return min;
+      return Math.min(Math.max(value, min), max);
+    }
+
     function setText(id, value) {
-      byId(id).textContent = value;
+      const el = byId(id);
+      if (el) el.textContent = value;
     }
 
     function toCurrency(value) {
@@ -569,6 +972,70 @@
 
     function toPercent(value) {
       return `${toNumber(value)}%`;
+    }
+
+    function updateSliderProgress(slider) {
+      const min = parseFloat(slider.min);
+      const max = parseFloat(slider.max);
+      const value = parseFloat(slider.value);
+      const progress = ((value - min) / (max - min)) * 100;
+      slider.style.setProperty('--slider-progress', `${progress}%`);
+    }
+
+    function collectPersistedState() {
+      const state = {};
+      for (const id of persistedFieldIds) {
+        const node = byId(id);
+        if (node) {
+          state[id] = node.value;
+        }
+      }
+      return state;
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(collectPersistedState()));
+      } catch (error) {
+        // Ignore storage failures (private mode, quota, etc.).
+      }
+    }
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === "object" ? parsed : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function syncModeInputState() {
+      const isMargin = byId("gstMode").value === "margin";
+      const marginRow = byId("marginPurchasePriceRow");
+      if (marginRow) {
+        marginRow.style.display = isMargin ? "flex" : "none";
+      }
+      const marginInput = byId("marginPurchasePrice");
+      if (marginInput) {
+        marginInput.disabled = !isMargin;
+      }
+    }
+
+    function updateWarnings(warnings) {
+      const warningsNode = byId('warnings');
+      if (!warningsNode) return;
+      
+      if (warnings.length === 0) {
+        warningsNode.classList.remove("show");
+        warningsNode.innerHTML = '';
+        return;
+      }
+
+      warningsNode.classList.add("show");
+      warningsNode.innerHTML = warnings.map(w => `<div>${w}</div>`).join('');
     }
 
     function solveGrossForRequiredNet(requiredNetRealisation, titlesLegals, variableSellingRate, gstMode, marginPurchasePrice) {
@@ -614,74 +1081,53 @@
       return Number.isFinite(grossAboveThreshold) ? Math.max(grossAboveThreshold, 0) : Number.NaN;
     }
 
-    function loadValues(values) {
-      for (const id of ids) {
-        const node = byId(id);
-        if (!node) {
-          continue;
-        }
-        node.value = values[id];
-      }
-      syncModeInputState();
-      update();
-    }
-
-    function loadPdfDefaults() {
-      loadValues(pdfDefaults);
-    }
-
-    function loadZeroDefaults() {
-      loadValues(zeroDefaults);
-    }
-
-    function syncModeInputState() {
-      const isMargin = byId("gstMode").value === "margin";
-      const marginRow = byId("marginPurchasePriceRow");
-      marginRow.style.display = isMargin ? "grid" : "none";
-      byId("marginPurchasePrice").disabled = !isMargin;
-    }
-
-    function updateWarnings(warnings) {
-      const warningsNode = byId("warnings");
-      if (warnings.length === 0) {
-        warningsNode.classList.remove("show");
-        warningsNode.replaceChildren();
-        return;
-      }
-
-      warningsNode.classList.add("show");
-      warningsNode.replaceChildren();
-      warnings.forEach((item) => {
-        const row = document.createElement("div");
-        row.textContent = item;
-        warningsNode.appendChild(row);
-      });
-    }
-
     function update() {
-      const landSizeHa = readNumber("landSizeHa");
-      const developablePct = readNumber("developablePct");
-      const minimumLotSqm = readNumber("minimumLotSqm");
-      const salePricePerLot = readNumber("salePricePerLot");
+      const projectType = byId("projectType").value;
+      const projectProfile = getProjectTypeProfile(projectType);
+      const landSizeHaRaw = readNumber("landSizeHa");
+      const developablePctRaw = readNumber("developablePct");
+      const minimumLotSqmRaw = readNumber("minimumLotSqm");
+      const salePricePerLotRaw = readNumber("salePricePerLot");
       const gstMode = byId("gstMode").value;
-      const marginPurchasePrice = readNumber("marginPurchasePrice");
-      const titlesLegalsPerLot = readNumber("titlesLegalsPerLot");
-      const marketingPct = readNumber("marketingPct") / 100;
-      const agentsPct = readNumber("agentsPct") / 100;
-      const targetMargin = readNumber("targetMarginPct") / 100;
-      const constructionCost = readNumber("constructionCost");
-      const contingencyPct = readNumber("contingencyPct") / 100;
-      const professionalFees = readNumber("professionalFees");
-      const headworksCharges = readNumber("headworksCharges");
-      const councilFees = readNumber("councilFees");
-      const acquisitionCosts = readNumber("acquisitionCosts");
-      const ratesTaxes = readNumber("ratesTaxes");
-      const interestFinanceCosts = readNumber("interestFinanceCosts");
-      const gstReclaimed = readNumber("gstReclaimed");
+      const marginPurchasePriceRaw = readNumber("marginPurchasePrice");
+      const titlesLegalsPerLotRaw = readNumber("titlesLegalsPerLot");
+      const marketingPctRaw = readNumber("marketingPct");
+      const agentsPctRaw = readNumber("agentsPct");
+      const targetMarginPctRaw = readNumber("targetMarginPct");
+      const constructionCostRaw = readNumber("constructionCostInput");
+      const contingencyPctRaw = readNumber("contingencyPct");
+      const professionalFeesRaw = readNumber("professionalFees");
+      const headworksChargesRaw = readNumber("headworksCharges");
+      const councilFeesRaw = readNumber("councilFees");
+      const acquisitionCostsRaw = readNumber("acquisitionCosts");
+      const ratesTaxesRaw = readNumber("ratesTaxes");
+      const interestFinanceCostsRaw = readNumber("interestFinanceCosts");
+      const gstReclaimedRaw = readNumber("gstReclaimed");
+
+      const landSizeHa = clamp(landSizeHaRaw, 0, Number.POSITIVE_INFINITY);
+      const developablePct = clamp(developablePctRaw, 0, 100);
+      const minimumLotSqm = clamp(minimumLotSqmRaw, 0, Number.POSITIVE_INFINITY);
+      const salePricePerLot = clamp(salePricePerLotRaw, 0, Number.POSITIVE_INFINITY);
+      const marginPurchasePrice = clamp(marginPurchasePriceRaw, 0, Number.POSITIVE_INFINITY);
+      const titlesLegalsPerLot = clamp(titlesLegalsPerLotRaw, 0, Number.POSITIVE_INFINITY);
+      const marketingPct = clamp(marketingPctRaw, 0, 100) / 100;
+      const agentsPct = clamp(agentsPctRaw, 0, 100) / 100;
+      const targetMargin = clamp(targetMarginPctRaw, 0, 100) / 100;
+      const constructionCost = clamp(constructionCostRaw, 0, Number.POSITIVE_INFINITY);
+      setText("constructionDisplay", toCurrency(constructionCost));
+      const contingencyPct = clamp(contingencyPctRaw, 0, 100) / 100;
+      const professionalFees = clamp(professionalFeesRaw, 0, Number.POSITIVE_INFINITY);
+      const headworksCharges = clamp(headworksChargesRaw, 0, Number.POSITIVE_INFINITY);
+      const councilFees = clamp(councilFeesRaw, 0, Number.POSITIVE_INFINITY);
+      const acquisitionCosts = clamp(acquisitionCostsRaw, 0, Number.POSITIVE_INFINITY);
+      const ratesTaxes = clamp(ratesTaxesRaw, 0, Number.POSITIVE_INFINITY);
+      const interestFinanceCosts = clamp(interestFinanceCostsRaw, 0, Number.POSITIVE_INFINITY);
+      const gstReclaimed = clamp(gstReclaimedRaw, 0, Number.POSITIVE_INFINITY);
 
       const developableAreaHa = landSizeHa * (developablePct / 100);
       const calculatedLotsRaw = minimumLotSqm > 0 ? (developableAreaHa * 10000) / minimumLotSqm : 0;
-      const totalLots = Math.max(Math.floor(calculatedLotsRaw), 0);
+      const adjustedLotsRaw = calculatedLotsRaw * projectProfile.lotYieldFactor;
+      const totalLots = Math.max(Math.floor(adjustedLotsRaw), 0);
 
       const grossRealisation = salePricePerLot * totalLots;
       const gstNoMargin = grossRealisation * GST_RATE / (1 + GST_RATE);
@@ -692,34 +1138,41 @@
       const grossExSelected = gstMode === "margin" ? grossExMarginScheme : grossExNoMarginScheme;
 
       const titlesLegals = titlesLegalsPerLot * totalLots;
-      const variableSellingRate = (marketingPct + agentsPct) * (1 + GST_RATE);
+      const baseVariableSellingRate = (marketingPct + agentsPct) * (1 + GST_RATE);
+      const variableSellingRate = baseVariableSellingRate * projectProfile.sellingCostMultiplier;
       const marketingAndCommissions = grossRealisation * variableSellingRate;
       const sellingCostsTotal = titlesLegals + marketingAndCommissions + gstSalesRemittance;
       const netRealisation = grossRealisation - sellingCostsTotal;
 
-      const targetMarginDenominator = 1 + targetMargin;
+      const effectiveTargetMargin = clamp(targetMargin + projectProfile.targetMarginBuffer, 0, 1);
+      const targetMarginDenominator = 1 + effectiveTargetMargin;
       const marginForRisk = targetMarginDenominator > 0
-        ? netRealisation * targetMargin / targetMarginDenominator
+        ? netRealisation * effectiveTargetMargin / targetMarginDenominator
         : 0;
       const afterRisk = netRealisation - marginForRisk;
 
-      const contingencyAllowance = constructionCost * contingencyPct;
-      const constructionCostsTotal = constructionCost + contingencyAllowance + professionalFees + headworksCharges + councilFees;
+      const adjustedConstructionCost = constructionCost * projectProfile.constructionCostMultiplier;
+      const adjustedProfessionalFees = professionalFees * projectProfile.softCostMultiplier;
+      const adjustedHeadworksCharges = headworksCharges * projectProfile.softCostMultiplier;
+      const adjustedCouncilFees = councilFees * projectProfile.softCostMultiplier;
+      const contingencyAllowance = adjustedConstructionCost * contingencyPct;
+      const constructionCostsTotal = adjustedConstructionCost + contingencyAllowance + adjustedProfessionalFees + adjustedHeadworksCharges + adjustedCouncilFees;
       const afterConstruction = afterRisk - constructionCostsTotal;
 
       const purchaseHoldingTotal = acquisitionCosts + ratesTaxes;
+      const adjustedInterestFinanceCosts = interestFinanceCosts * projectProfile.financeCostMultiplier;
       const afterPurchaseHolding = afterConstruction - purchaseHoldingTotal;
-      const afterFinance = afterPurchaseHolding - interestFinanceCosts;
+      const afterFinance = afterPurchaseHolding - adjustedInterestFinanceCosts;
       const indicativeValue = afterFinance + gstReclaimed;
 
-      const totalCostExProfit = constructionCostsTotal + purchaseHoldingTotal + interestFinanceCosts - gstReclaimed;
-      const developmentProfit = marginForRisk;
-      const developmentMargin = targetMargin * 100;
+      const totalCostExProfit = constructionCostsTotal + purchaseHoldingTotal + adjustedInterestFinanceCosts - gstReclaimed;
+      const developmentProfit = netRealisation - totalCostExProfit;
+      const developmentMargin = totalCostExProfit > 0 ? (developmentProfit / totalCostExProfit) * 100 : 0;
       const profitPerLot = totalLots > 0 ? developmentProfit / totalLots : 0;
       const valuePerHectare = developableAreaHa > 0 ? indicativeValue / developableAreaHa : 0;
       const valuePerLot = totalLots > 0 ? indicativeValue / totalLots : 0;
 
-      const requiredNetForTarget = totalCostExProfit * (1 + targetMargin);
+      const requiredNetForTarget = totalCostExProfit * (1 + effectiveTargetMargin);
       const breakEvenGross = solveGrossForRequiredNet(
         requiredNetForTarget,
         titlesLegals,
@@ -732,26 +1185,52 @@
         : Number.NaN;
 
       const warnings = [];
+      if (projectType !== "residential") {
+        const targetMarginBufferPp = projectProfile.targetMarginBuffer * 100;
+        warnings.push(
+          `${projectProfile.name} profile is applied: lot yield x${toNumber(projectProfile.lotYieldFactor)}, selling costs x${toNumber(projectProfile.sellingCostMultiplier)}, construction x${toNumber(projectProfile.constructionCostMultiplier)}, soft costs x${toNumber(projectProfile.softCostMultiplier)}, finance x${toNumber(projectProfile.financeCostMultiplier)}, target margin +${toNumber(targetMarginBufferPp)}pp.`
+        );
+      }
+      if (landSizeHaRaw < 0 || minimumLotSqmRaw < 0 || salePricePerLotRaw < 0 || marginPurchasePriceRaw < 0 || titlesLegalsPerLotRaw < 0 || constructionCostRaw < 0 || professionalFeesRaw < 0 || headworksChargesRaw < 0 || councilFeesRaw < 0 || acquisitionCostsRaw < 0 || ratesTaxesRaw < 0 || interestFinanceCostsRaw < 0 || gstReclaimedRaw < 0) {
+        warnings.push("Negative values are not allowed and were treated as zero.");
+      }
+      if (developablePctRaw < 0 || developablePctRaw > 100) {
+        warnings.push("Developable area must stay between 0% and 100%.");
+      }
+      if (marketingPctRaw < 0 || marketingPctRaw > 100 || agentsPctRaw < 0 || agentsPctRaw > 100 || contingencyPctRaw < 0 || contingencyPctRaw > 100) {
+        warnings.push("Percentage inputs must stay between 0% and 100%.");
+      }
+      if (targetMarginPctRaw < 0 || targetMarginPctRaw > 100) {
+        warnings.push("Target margin must stay between 0% and 100%.");
+      }
+      if (totalLots === 0 && landSizeHa > 0 && developablePct > 0 && minimumLotSqm > 0) {
+        warnings.push("Calculated lots are zero after project-type adjustments. Increase developable area or reduce minimum lot size.");
+      }
       if (indicativeValue < 0) {
         warnings.push("Residual land value is negative with current assumptions.");
       }
       if (variableSellingRate >= 1) {
         warnings.push("Marketing plus commissions are too high to support a feasible sale model.");
       }
+      if (!Number.isFinite(breakEvenSalePerLot) && totalLots > 0) {
+        warnings.push("Break-even sale price cannot be solved with current selling-cost and GST settings.");
+      }
       updateWarnings(warnings);
 
+      // Update all outputs
       setText("outLandValue", toCurrency(indicativeValue));
-      setText("outProfit", toCurrency(developmentProfit));
-      setText("outMargin", toPercent(developmentMargin));
-
-      const landValueNode = byId("outLandValue");
-      landValueNode.classList.toggle("danger", indicativeValue < 0);
-
       setText("outLandSizeHa", `${toNumber(landSizeHa)} ha`);
       setText("outDevelopableArea", `${toNumber(developableAreaHa)} ha`);
+      setText(
+        "outTotalLotsLabel",
+        projectType === "residential"
+          ? "Calculated Lots (from area + lot size)"
+          : `Calculated Lots (${projectProfile.name} profile-adjusted)`
+      );
       setText("outTotalLots", toNumber(totalLots));
       setText("outSalePricePerLot", toCurrency(salePricePerLot));
 
+      // Cashflow Feasibility
       setText("outGrossRealisation", toCurrency(grossRealisation));
       setText("outTitlesLegals", toCurrency(titlesLegals));
       setText("outMarketingCommissions", toCurrency(marketingAndCommissions));
@@ -764,18 +1243,21 @@
       setText("outAfterConstruction", toCurrency(afterConstruction));
       setText("outPurchaseHoldingTotal", toCurrency(purchaseHoldingTotal));
       setText("outAfterPurchaseHolding", toCurrency(afterPurchaseHolding));
-      setText("outInterestFinance", toCurrency(interestFinanceCosts));
+      setText("outInterestFinance", toCurrency(adjustedInterestFinanceCosts));
       setText("outAfterFinance", toCurrency(afterFinance));
-      setText("outGstReclaimed", toCurrency(gstReclaimed));
+      setText("outGstReclaimedDisplay", toCurrency(gstReclaimed));
       setText("outIndicativeValue", toCurrency(indicativeValue));
 
+      // Key Ratios
       setText(
         "outGrossExLabel",
         gstMode === "margin"
           ? "Gross Realisation Ex GST (Margin Scheme)"
-          : "Gross Realisation Ex GST (GST)"
+          : "Gross Realisation Ex GST (Standard GST)"
       );
       setText("outGrossExSelected", toCurrency(grossExSelected));
+      setText("outProfit", toCurrency(developmentProfit));
+      setText("outMargin", toPercent(developmentMargin));
       setText("outProfitPerLot", toCurrency(profitPerLot));
       setText(
         "outBreakEvenSalePerLot",
@@ -783,21 +1265,227 @@
       );
       setText("outValuePerHectare", toCurrency(valuePerHectare));
       setText("outValuePerLot", toCurrency(valuePerLot));
+
+      // Color the main value based on positive/negative
+      const el = byId('outLandValue');
+      if (el) {
+        el.style.color = indicativeValue < 0 ? '#ff6b6b' : 'var(--accent)';
+      }
+
+      saveState();
     }
 
+    function loadValues(values) {
+      for (const [id, val] of Object.entries(values)) {
+        const node = byId(id);
+        if (node) {
+          node.value = val;
+        }
+      }
+      
+      // Update button groups
+      updateButtonGroup('gstModeButtons', String(values.gstMode ?? byId("gstMode").value));
+      updateButtonGroup('marginButtons', String(values.targetMarginPct ?? byId("targetMarginPct").value));
+      
+      // Update slider
+      const slider = byId('constructionSlider');
+      if (slider && values.constructionCostInput !== undefined) {
+        slider.value = values.constructionCostInput;
+        updateSliderProgress(slider);
+      }
+      
+      syncModeInputState();
+      update();
+    }
+
+    function updateButtonGroup(groupId, value) {
+      const group = byId(groupId);
+      if (!group) return;
+      
+      const buttons = group.querySelectorAll('button');
+      buttons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.value === value);
+      });
+    }
+
+    function resetCalculator() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (error) {
+        // Ignore storage failures (private mode, quota, etc.).
+      }
+      loadValues(clearedDefaults);
+    }
+
+    async function downloadPdf() {
+      const source = byId("resultsContent");
+      const downloadButton = byId("downloadPdf");
+
+      if (!source) return;
+      if (typeof html2canvas === "undefined" || !window.jspdf || !window.jspdf.jsPDF) {
+        alert("PDF export tools failed to load. Please refresh and try again.");
+        return;
+      }
+
+      const exportNode = source.cloneNode(true);
+      exportNode.classList.add("pdf-export");
+
+      const sourceRect = source.getBoundingClientRect();
+      const exportWidth = Math.max(1, Math.ceil(sourceRect.width));
+
+      const offscreenWrapper = document.createElement("div");
+      offscreenWrapper.style.position = "fixed";
+      offscreenWrapper.style.left = "-10000px";
+      offscreenWrapper.style.top = "0";
+      offscreenWrapper.style.width = `${exportWidth}px`;
+      offscreenWrapper.style.background = "transparent";
+      exportNode.style.width = `${exportWidth}px`;
+      exportNode.style.boxSizing = "border-box";
+      offscreenWrapper.appendChild(exportNode);
+      document.body.appendChild(offscreenWrapper);
+
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const filename = `land-value-results-${yyyy}-${mm}-${dd}.pdf`;
+
+      try {
+        if (downloadButton) {
+          downloadButton.disabled = true;
+          downloadButton.textContent = "Generating PDF...";
+        }
+
+        const canvas = await html2canvas(exportNode, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: null,
+          width: exportWidth,
+          windowWidth: exportWidth,
+          scrollX: 0,
+          scrollY: 0
+        });
+
+        const imageData = canvas.toDataURL("image/png");
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+
+        const portraitWidth = 210;
+        const portraitHeight = 297;
+        const landscapeWidth = 297;
+        const landscapeHeight = 210;
+        const safeMargin = 3;
+
+        const portraitRatio = Math.min(
+          (portraitWidth - (safeMargin * 2)) / imgWidth,
+          (portraitHeight - (safeMargin * 2)) / imgHeight
+        );
+        const landscapeRatio = Math.min(
+          (landscapeWidth - (safeMargin * 2)) / imgWidth,
+          (landscapeHeight - (safeMargin * 2)) / imgHeight
+        );
+
+        const useLandscape = landscapeRatio > portraitRatio;
+        const orientation = useLandscape ? "landscape" : "portrait";
+        const pdf = new window.jspdf.jsPDF({
+          orientation,
+          unit: "mm",
+          format: "a4",
+          compress: true
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const targetWidth = pageWidth - (safeMargin * 2);
+        const targetHeight = pageHeight - (safeMargin * 2);
+        const ratio = Math.min(targetWidth / imgWidth, targetHeight / imgHeight);
+        const renderWidth = imgWidth * ratio;
+        const renderHeight = imgHeight * ratio;
+        const x = (pageWidth - renderWidth) / 2;
+        const y = (pageHeight - renderHeight) / 2;
+
+        pdf.addImage(imageData, "PNG", x, y, renderWidth, renderHeight);
+        pdf.save(filename);
+      } catch (error) {
+        alert("Could not generate PDF. Please try again.");
+      } finally {
+        if (offscreenWrapper.parentNode) {
+          offscreenWrapper.parentNode.removeChild(offscreenWrapper);
+        }
+        if (downloadButton) {
+          downloadButton.disabled = false;
+          downloadButton.textContent = "Download PDF";
+        }
+      }
+    }
+
+    // Event Listeners
     document.querySelectorAll("input, select").forEach((node) => {
       node.addEventListener("input", () => {
         syncModeInputState();
         update();
       });
-      node.addEventListener("change", () => {
-        syncModeInputState();
-        update();
-      });
     });
 
-    byId("resetDefaults").addEventListener("click", loadPdfDefaults);
-    loadZeroDefaults();
+    // GST Mode Button Group
+    const gstModeButtons = byId('gstModeButtons');
+    if (gstModeButtons) {
+      gstModeButtons.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          gstModeButtons.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          byId('gstMode').value = btn.dataset.value;
+          syncModeInputState();
+          update();
+        });
+      });
+    }
+
+    // Margin Button Group
+    const marginButtons = byId('marginButtons');
+    if (marginButtons) {
+      marginButtons.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          marginButtons.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          byId('targetMarginPct').value = btn.dataset.value;
+          update();
+        });
+      });
+    }
+
+    // Construction Cost Slider
+    const constructionSlider = byId('constructionSlider');
+    if (constructionSlider) {
+      constructionSlider.addEventListener('input', () => {
+        const hiddenInput = byId('constructionCostInput');
+        if (hiddenInput) {
+          hiddenInput.value = constructionSlider.value;
+        }
+        updateSliderProgress(constructionSlider);
+        update();
+      });
+      // Initialize slider progress
+      updateSliderProgress(constructionSlider);
+    }
+
+    // Collapsible sections
+    document.querySelectorAll('.collapsible-light').forEach(section => {
+      const header = section.querySelector('.collapsible-header');
+      if (header) {
+        header.addEventListener('click', () => {
+          section.classList.toggle('open');
+        });
+      }
+    });
+
+    // Reset button
+    byId("resetDefaults").addEventListener("click", resetCalculator);
+    byId("downloadPdf").addEventListener("click", downloadPdf);
+
+    // Load saved values on start, otherwise use cleared defaults.
+    const savedState = loadSavedState();
+    loadValues(savedState ? { ...clearedDefaults, ...savedState } : clearedDefaults);
   </script>
 </body>
 </html>
