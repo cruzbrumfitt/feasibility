@@ -209,59 +209,6 @@
       flex-wrap: wrap;
     }
 
-    /* Collapsible Sections - Light Theme */
-    .collapsible-light {
-      border-top: 1px solid var(--line);
-      margin-top: 0;
-      padding-top: 0;
-    }
-
-    .collapsible-light .collapsible-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 0;
-      cursor: pointer;
-    }
-
-    .collapsible-light .collapsible-header h3 {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .collapsible-light .collapsible-header .toggle {
-      color: var(--muted);
-      font-size: 1rem;
-      transition: transform 0.2s ease;
-    }
-
-    .collapsible-light.open .toggle {
-      transform: rotate(180deg);
-    }
-
-    .collapsible-light .collapsible-content {
-      display: none;
-      padding-bottom: 8px;
-    }
-
-    .collapsible-light.open .collapsible-content {
-      display: block;
-    }
-
-    .collapsible-light .input-group {
-      gap: 10px;
-    }
-
-    .collapsible-light .input-row label {
-      font-size: 0.75rem;
-    }
-
-    .collapsible-light .input-row input {
-      padding: 8px 10px;
-      font-size: 0.9rem;
-    }
-
     /* Right Panel - Dark Results */
     .results-panel {
       background: var(--panel-dark);
@@ -668,56 +615,70 @@
           </div>
         </div>
 
-        <!-- Advanced Options - Collapsible -->
+        <!-- Sales Costs -->
         <div class="panel">
-          <div class="collapsible-light" id="advancedOptions">
-            <div class="collapsible-header">
-              <h3>Advanced Options</h3>
-              <span class="toggle">&#9660;</span>
+          <div class="panel-title">Sales Costs</div>
+          <div class="input-group">
+            <div class="input-row">
+              <label for="titlesLegalsPerLot">Titles & Legals per Lot ($)</label>
+              <input id="titlesLegalsPerLot" name="titlesLegalsPerLot" type="number" min="0" step="100">
             </div>
-            <div class="collapsible-content">
-              <div class="input-group">
-                <div class="input-row">
-                  <label for="titlesLegalsPerLot">Titles & Legals per Lot ($)</label>
-                  <input id="titlesLegalsPerLot" name="titlesLegalsPerLot" type="number" min="0" step="100">
-                </div>
-                <div class="input-row">
-                  <label for="marketingPct">Marketing Allowance (%)</label>
-                  <input id="marketingPct" name="marketingPct" type="number" min="0" step="0.1">
-                </div>
-                <div class="input-row">
-                  <label for="agentsPct">Agent Commission (%)</label>
-                  <input id="agentsPct" name="agentsPct" type="number" min="0" step="0.1">
-                </div>
-                <div class="input-row">
-                  <label for="professionalFees">Professional Fees ($)</label>
-                  <input id="professionalFees" name="professionalFees" type="number" min="0" step="1000">
-                </div>
-                <div class="input-row">
-                  <label for="headworksCharges">Council Headworks ($)</label>
-                  <input id="headworksCharges" name="headworksCharges" type="number" min="0" step="1000">
-                </div>
-                <div class="input-row">
-                  <label for="councilFees">Council Fees ($)</label>
-                  <input id="councilFees" name="councilFees" type="number" min="0" step="1000">
-                </div>
-                <div class="input-row">
-                  <label for="acquisitionCosts">Acquisition Costs ($)</label>
-                  <input id="acquisitionCosts" name="acquisitionCosts" type="number" min="0" step="1000">
-                </div>
-                <div class="input-row">
-                  <label for="ratesTaxes">Rates & Taxes ($)</label>
-                  <input id="ratesTaxes" name="ratesTaxes" type="number" min="0" step="1000">
-                </div>
-                <div class="input-row">
-                  <label for="interestFinanceCosts">Interest / Finance ($)</label>
-                  <input id="interestFinanceCosts" name="interestFinanceCosts" type="number" min="0" step="1000">
-                </div>
-                <div class="input-row">
-                  <label for="gstReclaimed">GST Reclaimed ($)</label>
-                  <input id="gstReclaimed" name="gstReclaimed" type="number" min="0" step="1000">
-                </div>
-              </div>
+            <div class="input-row">
+              <label for="marketingPct">Marketing Allowance (%)</label>
+              <input id="marketingPct" name="marketingPct" type="number" min="0" step="0.1">
+            </div>
+            <div class="input-row">
+              <label for="agentsPct">Agent Commission (%)</label>
+              <input id="agentsPct" name="agentsPct" type="number" min="0" step="0.1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Professional & Council Fees -->
+        <div class="panel">
+          <div class="panel-title">Professional & Council Fees</div>
+          <div class="input-group">
+            <div class="input-row">
+              <label for="professionalFees">Professional Fees ($)</label>
+              <input id="professionalFees" name="professionalFees" type="number" min="0" step="1000">
+            </div>
+            <div class="input-row">
+              <label for="headworksCharges">Council Headworks ($)</label>
+              <input id="headworksCharges" name="headworksCharges" type="number" min="0" step="1000">
+            </div>
+            <div class="input-row">
+              <label for="councilFees">Council Fees ($)</label>
+              <input id="councilFees" name="councilFees" type="number" min="0" step="1000">
+            </div>
+          </div>
+        </div>
+
+        <!-- Holding & Finance -->
+        <div class="panel">
+          <div class="panel-title">Holding & Finance</div>
+          <div class="input-group">
+            <div class="input-row">
+              <label for="acquisitionCosts">Acquisition Costs ($)</label>
+              <input id="acquisitionCosts" name="acquisitionCosts" type="number" min="0" step="1000">
+            </div>
+            <div class="input-row">
+              <label for="ratesTaxes">Rates & Taxes ($)</label>
+              <input id="ratesTaxes" name="ratesTaxes" type="number" min="0" step="1000">
+            </div>
+            <div class="input-row">
+              <label for="interestFinanceCosts">Interest / Finance ($)</label>
+              <input id="interestFinanceCosts" name="interestFinanceCosts" type="number" min="0" step="1000">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tax -->
+        <div class="panel">
+          <div class="panel-title">Tax</div>
+          <div class="input-group">
+            <div class="input-row">
+              <label for="gstReclaimed">GST Reclaimed ($)</label>
+              <input id="gstReclaimed" name="gstReclaimed" type="number" min="0" step="1000">
             </div>
           </div>
         </div>
@@ -1468,16 +1429,6 @@
       // Initialize slider progress
       updateSliderProgress(constructionSlider);
     }
-
-    // Collapsible sections
-    document.querySelectorAll('.collapsible-light').forEach(section => {
-      const header = section.querySelector('.collapsible-header');
-      if (header) {
-        header.addEventListener('click', () => {
-          section.classList.toggle('open');
-        });
-      }
-    });
 
     // Reset button
     byId("resetDefaults").addEventListener("click", resetCalculator);
