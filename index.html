@@ -111,6 +111,79 @@
       color: var(--muted);
     }
 
+    .label-with-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hint-anchor {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .hint-button {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--panel-light);
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+    }
+
+    .hint-button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .hint-button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .hint-text {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(280px, calc(100vw - 32px));
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel-light);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      font-size: 0.75rem;
+      color: var(--ink);
+      line-height: 1.35;
+      z-index: 50;
+    }
+
+    .hint-text::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background: var(--panel-light);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .hint-anchor:hover .hint-text,
+    .hint-anchor:focus-within .hint-text {
+      display: block;
+    }
+
     .input-row input,
     .input-row select {
       width: 100%;
@@ -127,6 +200,11 @@
     .input-row select:focus {
       outline: none;
       border-color: var(--ink);
+    }
+
+    .input-row input::placeholder {
+      color: #9a9a9a;
+      opacity: 1;
     }
 
     .input-row select {
@@ -321,6 +399,10 @@
     }
 
     /* Slider Section */
+    .construction-mode-toggle {
+      margin-bottom: 12px;
+    }
+
     .slider-section {
       margin-top: 8px;
     }
@@ -383,6 +465,12 @@
       color: var(--muted);
     }
 
+    .slider-meta {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
     /* Warnings */
     .warnings {
       margin-top: 16px;
@@ -419,6 +507,7 @@
       .header h1 {
         font-size: 1.5rem;
       }
+
     }
 
     @media (max-width: 500px) {
@@ -559,15 +648,15 @@
           <div class="input-group">
             <div class="input-row">
               <label for="landSizeHa">Land Size (ha)</label>
-              <input id="landSizeHa" name="landSizeHa" type="number" min="0" step="0.01">
+              <input id="landSizeHa" name="landSizeHa" type="number" min="0" step="0.01" placeholder="e.g. 2.5">
             </div>
             <div class="input-row">
               <label for="developablePct">Developable Area (%)</label>
-              <input id="developablePct" name="developablePct" type="number" min="0" max="100" step="0.01">
+              <input id="developablePct" name="developablePct" type="number" min="0" max="100" step="0.01" placeholder="e.g. 65">
             </div>
             <div class="input-row">
               <label for="minimumLotSqm">Minimum Lot Size (sqm)</label>
-              <input id="minimumLotSqm" name="minimumLotSqm" type="number" min="1" step="1">
+              <input id="minimumLotSqm" name="minimumLotSqm" type="number" min="1" step="1" placeholder="e.g. 450">
             </div>
           </div>
         </div>
@@ -577,11 +666,11 @@
           <div class="input-group">
             <div class="input-row">
               <label for="salePricePerLot">Price including GST ($)</label>
-              <input id="salePricePerLot" name="salePricePerLot" type="number" min="0" step="0.01">
+              <input id="salePricePerLot" name="salePricePerLot" type="number" min="0" step="0.01" placeholder="e.g. 350000">
             </div>
             <div class="input-row" id="marginPurchasePriceRow">
               <label for="marginPurchasePrice">Purchase Price for Margin GST ($)</label>
-              <input id="marginPurchasePrice" name="marginPurchasePrice" type="number" min="0" step="0.01">
+              <input id="marginPurchasePrice" name="marginPurchasePrice" type="number" min="0" step="0.01" placeholder="e.g. 1500000">
             </div>
           </div>
         </div>
@@ -600,24 +689,32 @@
 
         <div class="panel">
           <div class="panel-title">Construction Cost</div>
+          <div class="button-group construction-mode-toggle" id="constructionModeButtons">
+            <button type="button" class="active" data-value="total">Total Project</button>
+            <button type="button" data-value="perLot">Per Lot</button>
+          </div>
+          <input type="hidden" id="constructionCostMode" value="total">
           <div class="slider-section">
             <div class="slider-header">
-              <span class="slider-label">Base Construction Cost</span>
+              <span class="slider-label" id="constructionModeLabel">Base Construction Cost (Total)</span>
               <span class="slider-value" id="constructionDisplay">$0</span>
             </div>
             <div class="slider-container">
-              <input type="range" class="slider" id="constructionSlider" min="0" max="20000000" step="50000" value="0">
+              <input type="range" class="slider" id="constructionSlider" min="0" max="100000000" step="100000" value="0">
             </div>
             <div class="slider-range">
-              <span>$0</span>
-              <span>$20,000,000</span>
+              <span id="constructionRangeMin">$0 total</span>
+              <span id="constructionRangeMax">$100,000,000 total</span>
             </div>
+            <div class="slider-meta" id="constructionDerivedDisplay">Equivalent per lot: N/A (0 lots)</div>
+            <input type="hidden" id="constructionCostTotalInput" value="0">
+            <input type="hidden" id="constructionCostPerLotInput" value="0">
             <input type="hidden" id="constructionCostInput" value="0">
           </div>
           <div class="input-group" style="margin-top: 12px;">
             <div class="input-row">
               <label for="contingencyPct">Contingency (%)</label>
-              <input id="contingencyPct" name="contingencyPct" type="number" min="0" step="1">
+              <input id="contingencyPct" name="contingencyPct" type="number" min="0" step="1" placeholder="e.g. 10">
             </div>
           </div>
         </div>
@@ -628,15 +725,15 @@
           <div class="input-group">
             <div class="input-row">
               <label for="titlesLegalsPerLot">Titles & Legals per Lot ($)</label>
-              <input id="titlesLegalsPerLot" name="titlesLegalsPerLot" type="number" min="0" step="100">
+              <input id="titlesLegalsPerLot" name="titlesLegalsPerLot" type="number" min="0" step="100" placeholder="e.g. 5000">
             </div>
             <div class="input-row">
               <label for="marketingPct">Marketing Allowance (%)</label>
-              <input id="marketingPct" name="marketingPct" type="number" min="0" step="0.1">
+              <input id="marketingPct" name="marketingPct" type="number" min="0" step="0.1" placeholder="e.g. 2.5">
             </div>
             <div class="input-row">
               <label for="agentsPct">Agent Commission (%)</label>
-              <input id="agentsPct" name="agentsPct" type="number" min="0" step="0.1">
+              <input id="agentsPct" name="agentsPct" type="number" min="0" step="0.1" placeholder="e.g. 2.0">
             </div>
           </div>
         </div>
@@ -647,15 +744,15 @@
           <div class="input-group">
             <div class="input-row">
               <label for="professionalFees">Professional Fees ($)</label>
-              <input id="professionalFees" name="professionalFees" type="number" min="0" step="1000">
+              <input id="professionalFees" name="professionalFees" type="number" min="0" step="1000" placeholder="e.g. 180000">
             </div>
             <div class="input-row">
               <label for="headworksCharges">Council Headworks ($)</label>
-              <input id="headworksCharges" name="headworksCharges" type="number" min="0" step="1000">
+              <input id="headworksCharges" name="headworksCharges" type="number" min="0" step="1000" placeholder="e.g. 250000">
             </div>
             <div class="input-row">
               <label for="councilFees">Council Fees ($)</label>
-              <input id="councilFees" name="councilFees" type="number" min="0" step="1000">
+              <input id="councilFees" name="councilFees" type="number" min="0" step="1000" placeholder="e.g. 75000">
             </div>
           </div>
         </div>
@@ -666,15 +763,15 @@
           <div class="input-group">
             <div class="input-row">
               <label for="acquisitionCosts">Acquisition Costs ($)</label>
-              <input id="acquisitionCosts" name="acquisitionCosts" type="number" min="0" step="1000">
+              <input id="acquisitionCosts" name="acquisitionCosts" type="number" min="0" step="1000" placeholder="e.g. 120000">
             </div>
             <div class="input-row">
               <label for="ratesTaxes">Rates & Taxes ($)</label>
-              <input id="ratesTaxes" name="ratesTaxes" type="number" min="0" step="1000">
+              <input id="ratesTaxes" name="ratesTaxes" type="number" min="0" step="1000" placeholder="e.g. 30000">
             </div>
             <div class="input-row">
               <label for="interestFinanceCosts">Interest / Finance ($)</label>
-              <input id="interestFinanceCosts" name="interestFinanceCosts" type="number" min="0" step="1000">
+              <input id="interestFinanceCosts" name="interestFinanceCosts" type="number" min="0" step="1000" placeholder="e.g. 220000">
             </div>
           </div>
         </div>
@@ -685,7 +782,7 @@
           <div class="input-group">
             <div class="input-row">
               <label for="gstReclaimed">GST Reclaimed ($)</label>
-              <input id="gstReclaimed" name="gstReclaimed" type="number" min="0" step="1000">
+              <input id="gstReclaimed" name="gstReclaimed" type="number" min="0" step="1000" placeholder="e.g. 90000">
             </div>
           </div>
         </div>
@@ -721,7 +818,7 @@
               <span class="value" id="outTotalLots">0</span>
             </div>
             <div class="results-row">
-              <span class="label">Sale Price per Lot (incl GST)</span>
+              <span class="label" id="outSalePricePerLotLabel">Sale Price per Lot (incl GST)</span>
               <span class="value" id="outSalePricePerLot">$0</span>
             </div>
           </div>
@@ -840,19 +937,38 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     const STORAGE_KEY = "landValueCalculatorStateV1";
+    const SCENARIO_STORAGE_KEY = "landValueCalculatorScenariosV1";
+    const SCENARIO_KEYS = ["base", "upside", "downside"];
+    const SCENARIO_LABELS = {
+      base: "Base",
+      upside: "Upside",
+      downside: "Downside"
+    };
 
     const clearedDefaults = {
       projectType: "residential",
+      lotMode: "calculated",
+      manualTotalLots: "",
       landSizeHa: "",
       developablePct: "",
       minimumLotSqm: "",
       salePricePerLot: "",
+      lotMixMode: "off",
+      mix1Pct: "",
+      mix1Price: "",
+      mix2Pct: "",
+      mix2Price: "",
+      mix3Pct: "",
+      mix3Price: "",
       gstMode: "margin",
       marginPurchasePrice: "",
       titlesLegalsPerLot: "",
       marketingPct: "",
       agentsPct: "",
       targetMarginPct: 22.46,
+      constructionCostMode: "total",
+      constructionCostTotalInput: 0,
+      constructionCostPerLotInput: 0,
       constructionCostInput: 0,
       contingencyPct: "",
       professionalFees: "",
@@ -861,7 +977,8 @@
       acquisitionCosts: "",
       ratesTaxes: "",
       interestFinanceCosts: "",
-      gstReclaimed: ""
+      gstReclaimed: "",
+      sensitivityPct: "10"
     };
 
     const persistedFieldIds = Object.keys(clearedDefaults);
@@ -875,6 +992,7 @@
       maximumFractionDigits: 2
     });
     const GST_RATE = 0.10;
+
     const PROJECT_TYPE_PROFILES = {
       residential: {
         name: "Residential Subdivision",
@@ -905,6 +1023,132 @@
       }
     };
 
+    const CONSTRUCTION_MODES = {
+      total: {
+        label: "Base Construction Cost (Total)",
+        sliderMin: 0,
+        sliderMax: 100000000,
+        sliderStep: 100000,
+        rangeMinText: "$0 total",
+        rangeMaxText: "$100,000,000 total"
+      },
+      perLot: {
+        label: "Base Construction Cost (Per Lot)",
+        sliderMin: 0,
+        sliderMax: 1000000,
+        sliderStep: 1000,
+        rangeMinText: "$0 / lot",
+        rangeMaxText: "$1,000,000 / lot"
+      }
+    };
+
+    const INPUT_HINTS = {
+      projectType: {
+        label: "Project Type",
+        text: "Select the development profile. Commercial and mixed-use apply built-in yield and cost adjustments."
+      },
+      landSizeHa: {
+        label: "Land Size (ha)",
+        text: "Enter total site area in hectares (1 ha = 10,000 sqm)."
+      },
+      developablePct: {
+        label: "Developable Area (%)",
+        text: "Share of the site that can actually be developed after roads, easements, and constraints."
+      },
+      minimumLotSqm: {
+        label: "Minimum Lot Size (sqm)",
+        text: "Smallest allowed lot size used to estimate how many lots can be created."
+      },
+      manualTotalLots: {
+        label: "Manual Total Lots",
+        text: "Use this to override calculated lots when you already know the intended yield."
+      },
+      salePricePerLot: {
+        label: "Price including GST ($)",
+        text: "Expected selling price per lot, including GST."
+      },
+      marginPurchasePrice: {
+        label: "Purchase Price for Margin GST ($)",
+        text: "Original land purchase price used to calculate GST when margin scheme is selected."
+      },
+      mix1Pct: {
+        label: "Lot Mix Share",
+        text: "Percentage of total lots allocated to this lot type."
+      },
+      mix1Price: {
+        label: "Lot Mix Price",
+        text: "Expected sale price per lot for this lot type."
+      },
+      mix2Pct: {
+        label: "Lot Mix Share",
+        text: "Percentage of total lots allocated to this lot type."
+      },
+      mix2Price: {
+        label: "Lot Mix Price",
+        text: "Expected sale price per lot for this lot type."
+      },
+      mix3Pct: {
+        label: "Lot Mix Share",
+        text: "Percentage of total lots allocated to this lot type."
+      },
+      mix3Price: {
+        label: "Lot Mix Price",
+        text: "Expected sale price per lot for this lot type."
+      },
+      constructionSlider: {
+        label: "Base Construction Cost",
+        text: "Set base construction as either a total project amount or a per-lot amount."
+      },
+      contingencyPct: {
+        label: "Contingency (%)",
+        text: "Extra percentage buffer added to construction costs for unknowns."
+      },
+      titlesLegalsPerLot: {
+        label: "Titles & Legals per Lot ($)",
+        text: "Per-lot title registration, legal, and settlement costs."
+      },
+      marketingPct: {
+        label: "Marketing Allowance (%)",
+        text: "Marketing spend as a percent of gross project sales."
+      },
+      agentsPct: {
+        label: "Agent Commission (%)",
+        text: "Sales agent commission as a percent of gross project sales."
+      },
+      professionalFees: {
+        label: "Professional Fees ($)",
+        text: "Consultant costs like planning, design, surveying, and engineering."
+      },
+      headworksCharges: {
+        label: "Council Headworks ($)",
+        text: "Infrastructure contribution charges paid to council or utilities."
+      },
+      councilFees: {
+        label: "Council Fees ($)",
+        text: "Approval, application, and assessment fees paid to council."
+      },
+      acquisitionCosts: {
+        label: "Acquisition Costs ($)",
+        text: "Upfront purchase costs such as duty, legal, and transaction expenses."
+      },
+      ratesTaxes: {
+        label: "Rates & Taxes ($)",
+        text: "Holding costs for council rates, land tax, and similar charges."
+      },
+      interestFinanceCosts: {
+        label: "Interest / Finance ($)",
+        text: "Estimated total interest and finance holding costs for the project."
+      },
+      gstReclaimed: {
+        label: "GST Reclaimed ($)",
+        text: "Input GST credits expected to be recovered and added back."
+      },
+      sensitivityPct: {
+        label: "Sensitivity Range (%)",
+        text: "Percentage swing used in downside and upside sensitivity tests."
+      }
+    };
+
     function getProjectTypeProfile(projectType) {
       return PROJECT_TYPE_PROFILES[projectType] || PROJECT_TYPE_PROFILES.residential;
     }
@@ -917,6 +1161,11 @@
       const el = byId(id);
       if (!el) return 0;
       const value = Number.parseFloat(el.value);
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    function readStateNumber(state, key) {
+      const value = Number.parseFloat(state[key]);
       return Number.isFinite(value) ? value : 0;
     }
 
@@ -942,21 +1191,146 @@
       return `${toNumber(value)}%`;
     }
 
+    function nowDisplayString() {
+      return new Date().toLocaleString("en-AU", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
     function updateSliderProgress(slider) {
       const min = parseFloat(slider.min);
       const max = parseFloat(slider.max);
       const value = parseFloat(slider.value);
-      const progress = ((value - min) / (max - min)) * 100;
-      slider.style.setProperty('--slider-progress', `${progress}%`);
+      const safeDenominator = max - min;
+      const progress = safeDenominator > 0 ? ((value - min) / safeDenominator) * 100 : 0;
+      slider.style.setProperty("--slider-progress", `${progress}%`);
+    }
+
+    function getConstructionMode() {
+      const mode = byId("constructionCostMode")?.value;
+      return mode === "perLot" ? "perLot" : "total";
+    }
+
+    function getLotMode() {
+      const mode = byId("lotMode")?.value;
+      return mode === "manual" ? "manual" : "calculated";
+    }
+
+    function getLotMixMode() {
+      const mode = byId("lotMixMode")?.value;
+      return mode === "on" ? "on" : "off";
+    }
+
+    function setGroupVisibility(rowId, shouldShow, enabledInputIds = []) {
+      const row = byId(rowId);
+      if (!row) return;
+      row.style.display = shouldShow ? "" : "none";
+      for (const inputId of enabledInputIds) {
+        const input = byId(inputId);
+        if (input) input.disabled = !shouldShow;
+      }
+    }
+
+    function syncModeInputState() {
+      const isMargin = byId("gstMode").value === "margin";
+      setGroupVisibility("marginPurchasePriceRow", isMargin, ["marginPurchasePrice"]);
+
+      const manualLots = getLotMode() === "manual";
+      setGroupVisibility("manualLotsRow", manualLots, ["manualTotalLots"]);
+
+      const lotMixEnabled = getLotMixMode() === "on";
+      setGroupVisibility("lotMixFields", lotMixEnabled, ["mix1Pct", "mix1Price", "mix2Pct", "mix2Price", "mix3Pct", "mix3Price"]);
+    }
+
+    function syncConstructionSliderState() {
+      const slider = byId("constructionSlider");
+      if (!slider) return;
+
+      const mode = getConstructionMode();
+      const config = CONSTRUCTION_MODES[mode] || CONSTRUCTION_MODES.total;
+      const sourceId = mode === "perLot" ? "constructionCostPerLotInput" : "constructionCostTotalInput";
+      const sourceInput = byId(sourceId);
+      const storedValueRaw = sourceInput ? Number.parseFloat(sourceInput.value) : 0;
+      const storedValue = Number.isFinite(storedValueRaw)
+        ? clamp(storedValueRaw, config.sliderMin, config.sliderMax)
+        : 0;
+
+      slider.min = String(config.sliderMin);
+      slider.max = String(config.sliderMax);
+      slider.step = String(config.sliderStep);
+      slider.value = String(storedValue);
+      if (sourceInput) sourceInput.value = String(storedValue);
+
+      setText("constructionModeLabel", config.label);
+      setText("constructionRangeMin", config.rangeMinText);
+      setText("constructionRangeMax", config.rangeMaxText);
+      updateSliderProgress(slider);
+    }
+
+    function setupInputHints() {
+      for (const [fieldId, hint] of Object.entries(INPUT_HINTS)) {
+        const field = byId(fieldId);
+        if (!field) continue;
+
+        const hintAnchor = document.createElement("span");
+        hintAnchor.className = "hint-anchor";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "hint-button";
+        button.textContent = "?";
+        button.setAttribute("aria-label", `Hint for ${hint.label}`);
+
+        const hintText = document.createElement("div");
+        hintText.className = "hint-text";
+        hintText.id = `hint-${fieldId}`;
+        hintText.textContent = hint.text;
+        hintText.setAttribute("role", "tooltip");
+        button.setAttribute("aria-describedby", hintText.id);
+        hintAnchor.appendChild(button);
+        hintAnchor.appendChild(hintText);
+
+        if (fieldId === "constructionSlider") {
+          const sliderSection = field.closest(".slider-section");
+          const sliderHeader = sliderSection ? sliderSection.querySelector(".slider-header") : null;
+          const sliderLabel = sliderHeader ? sliderHeader.querySelector(".slider-label") : null;
+          if (!sliderHeader || !sliderLabel) continue;
+
+          const labelWrap = document.createElement("div");
+          labelWrap.className = "label-with-hint";
+          sliderHeader.insertBefore(labelWrap, sliderLabel);
+          labelWrap.appendChild(sliderLabel);
+          labelWrap.appendChild(hintAnchor);
+        } else {
+          const row = field.closest(".input-row");
+          if (!row) continue;
+
+          let label = row.querySelector(`label[for="${fieldId}"]`);
+          if (!label) {
+            label = document.createElement("label");
+            label.setAttribute("for", fieldId);
+            label.textContent = hint.label;
+            row.insertBefore(label, row.firstChild);
+          }
+
+          const labelWrap = document.createElement("div");
+          labelWrap.className = "label-with-hint";
+          row.insertBefore(labelWrap, label);
+          labelWrap.appendChild(label);
+          labelWrap.appendChild(hintAnchor);
+        }
+      }
     }
 
     function collectPersistedState() {
       const state = {};
       for (const id of persistedFieldIds) {
         const node = byId(id);
-        if (node) {
-          state[id] = node.value;
-        }
+        if (node) state[id] = node.value;
       }
       return state;
     }
@@ -965,7 +1339,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(collectPersistedState()));
       } catch (error) {
-        // Ignore storage failures (private mode, quota, etc.).
+        // Ignore storage failures.
       }
     }
 
@@ -980,30 +1354,48 @@
       }
     }
 
-    function syncModeInputState() {
-      const isMargin = byId("gstMode").value === "margin";
-      const marginRow = byId("marginPurchasePriceRow");
-      if (marginRow) {
-        marginRow.style.display = isMargin ? "flex" : "none";
-      }
-      const marginInput = byId("marginPurchasePrice");
-      if (marginInput) {
-        marginInput.disabled = !isMargin;
+    function makeEmptyScenarioStore() {
+      return { base: null, upside: null, downside: null };
+    }
+
+    function loadScenarioStore() {
+      try {
+        const raw = localStorage.getItem(SCENARIO_STORAGE_KEY);
+        if (!raw) return makeEmptyScenarioStore();
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return makeEmptyScenarioStore();
+        return {
+          base: parsed.base ?? null,
+          upside: parsed.upside ?? null,
+          downside: parsed.downside ?? null
+        };
+      } catch (error) {
+        return makeEmptyScenarioStore();
       }
     }
 
+    function saveScenarioStore(store) {
+      try {
+        localStorage.setItem(SCENARIO_STORAGE_KEY, JSON.stringify(store));
+      } catch (error) {
+        // Ignore storage failures.
+      }
+    }
+
+    let scenarioStore = loadScenarioStore();
+
     function updateWarnings(warnings) {
-      const warningsNode = byId('warnings');
+      const warningsNode = byId("warnings");
       if (!warningsNode) return;
-      
+
       if (warnings.length === 0) {
         warningsNode.classList.remove("show");
-        warningsNode.innerHTML = '';
+        warningsNode.innerHTML = "";
         return;
       }
 
       warningsNode.classList.add("show");
-      warningsNode.innerHTML = warnings.map(w => `<div>${w}</div>`).join('');
+      warningsNode.innerHTML = warnings.map((w) => `<div>${w}</div>`).join("");
     }
 
     function solveGrossForRequiredNet(requiredNetRealisation, titlesLegals, variableSellingRate, gstMode, marginPurchasePrice) {
@@ -1015,9 +1407,7 @@
 
       if (gstMode !== "margin") {
         const denominator = 1 - variableSellingRate - gstFactor;
-        if (denominator <= 0) {
-          return Number.NaN;
-        }
+        if (denominator <= 0) return Number.NaN;
         return (requiredNetRealisation + titlesLegals) / denominator;
       }
 
@@ -1049,40 +1439,52 @@
       return Number.isFinite(grossAboveThreshold) ? Math.max(grossAboveThreshold, 0) : Number.NaN;
     }
 
-    function update() {
-      const projectType = byId("projectType").value;
+    function calculateFeasibility(inputState) {
+      const state = { ...clearedDefaults, ...inputState };
+      const projectType = state.projectType;
       const projectProfile = getProjectTypeProfile(projectType);
-      const landSizeHaRaw = readNumber("landSizeHa");
-      const developablePctRaw = readNumber("developablePct");
-      const minimumLotSqmRaw = readNumber("minimumLotSqm");
-      const salePricePerLotRaw = readNumber("salePricePerLot");
-      const gstMode = byId("gstMode").value;
-      const marginPurchasePriceRaw = readNumber("marginPurchasePrice");
-      const titlesLegalsPerLotRaw = readNumber("titlesLegalsPerLot");
-      const marketingPctRaw = readNumber("marketingPct");
-      const agentsPctRaw = readNumber("agentsPct");
-      const targetMarginPctRaw = readNumber("targetMarginPct");
-      const constructionCostRaw = readNumber("constructionCostInput");
-      const contingencyPctRaw = readNumber("contingencyPct");
-      const professionalFeesRaw = readNumber("professionalFees");
-      const headworksChargesRaw = readNumber("headworksCharges");
-      const councilFeesRaw = readNumber("councilFees");
-      const acquisitionCostsRaw = readNumber("acquisitionCosts");
-      const ratesTaxesRaw = readNumber("ratesTaxes");
-      const interestFinanceCostsRaw = readNumber("interestFinanceCosts");
-      const gstReclaimedRaw = readNumber("gstReclaimed");
+      const gstMode = state.gstMode === "gst" ? "gst" : "margin";
+      const lotMode = state.lotMode === "manual" ? "manual" : "calculated";
+      const lotMixMode = state.lotMixMode === "on" ? "on" : "off";
+      const constructionCostMode = state.constructionCostMode === "perLot" ? "perLot" : "total";
+
+      const landSizeHaRaw = readStateNumber(state, "landSizeHa");
+      const developablePctRaw = readStateNumber(state, "developablePct");
+      const minimumLotSqmRaw = readStateNumber(state, "minimumLotSqm");
+      const manualTotalLotsRaw = readStateNumber(state, "manualTotalLots");
+      const salePricePerLotRaw = readStateNumber(state, "salePricePerLot");
+      const mix1PctRaw = readStateNumber(state, "mix1Pct");
+      const mix2PctRaw = readStateNumber(state, "mix2Pct");
+      const mix3PctRaw = readStateNumber(state, "mix3Pct");
+      const mix1PriceRaw = readStateNumber(state, "mix1Price");
+      const mix2PriceRaw = readStateNumber(state, "mix2Price");
+      const mix3PriceRaw = readStateNumber(state, "mix3Price");
+      const marginPurchasePriceRaw = readStateNumber(state, "marginPurchasePrice");
+      const titlesLegalsPerLotRaw = readStateNumber(state, "titlesLegalsPerLot");
+      const marketingPctRaw = readStateNumber(state, "marketingPct");
+      const agentsPctRaw = readStateNumber(state, "agentsPct");
+      const targetMarginPctRaw = readStateNumber(state, "targetMarginPct");
+      const constructionCostTotalRaw = readStateNumber(state, "constructionCostTotalInput");
+      const constructionCostPerLotRaw = readStateNumber(state, "constructionCostPerLotInput");
+      const contingencyPctRaw = readStateNumber(state, "contingencyPct");
+      const professionalFeesRaw = readStateNumber(state, "professionalFees");
+      const headworksChargesRaw = readStateNumber(state, "headworksCharges");
+      const councilFeesRaw = readStateNumber(state, "councilFees");
+      const acquisitionCostsRaw = readStateNumber(state, "acquisitionCosts");
+      const ratesTaxesRaw = readStateNumber(state, "ratesTaxes");
+      const interestFinanceCostsRaw = readStateNumber(state, "interestFinanceCosts");
+      const gstReclaimedRaw = readStateNumber(state, "gstReclaimed");
 
       const landSizeHa = clamp(landSizeHaRaw, 0, Number.POSITIVE_INFINITY);
       const developablePct = clamp(developablePctRaw, 0, 100);
       const minimumLotSqm = clamp(minimumLotSqmRaw, 0, Number.POSITIVE_INFINITY);
+      const manualTotalLots = Math.max(Math.floor(clamp(manualTotalLotsRaw, 0, Number.POSITIVE_INFINITY)), 0);
       const salePricePerLot = clamp(salePricePerLotRaw, 0, Number.POSITIVE_INFINITY);
       const marginPurchasePrice = clamp(marginPurchasePriceRaw, 0, Number.POSITIVE_INFINITY);
       const titlesLegalsPerLot = clamp(titlesLegalsPerLotRaw, 0, Number.POSITIVE_INFINITY);
       const marketingPct = clamp(marketingPctRaw, 0, 100) / 100;
       const agentsPct = clamp(agentsPctRaw, 0, 100) / 100;
       const targetMargin = clamp(targetMarginPctRaw, 0, 100) / 100;
-      const constructionCost = clamp(constructionCostRaw, 0, Number.POSITIVE_INFINITY);
-      setText("constructionDisplay", toCurrency(constructionCost));
       const contingencyPct = clamp(contingencyPctRaw, 0, 100) / 100;
       const professionalFees = clamp(professionalFeesRaw, 0, Number.POSITIVE_INFINITY);
       const headworksCharges = clamp(headworksChargesRaw, 0, Number.POSITIVE_INFINITY);
@@ -1092,12 +1494,46 @@
       const interestFinanceCosts = clamp(interestFinanceCostsRaw, 0, Number.POSITIVE_INFINITY);
       const gstReclaimed = clamp(gstReclaimedRaw, 0, Number.POSITIVE_INFINITY);
 
+      const constructionTotalLimits = CONSTRUCTION_MODES.total;
+      const constructionPerLotLimits = CONSTRUCTION_MODES.perLot;
+      const constructionCostTotal = clamp(
+        constructionCostTotalRaw,
+        constructionTotalLimits.sliderMin,
+        constructionTotalLimits.sliderMax
+      );
+      const constructionCostPerLot = clamp(
+        constructionCostPerLotRaw,
+        constructionPerLotLimits.sliderMin,
+        constructionPerLotLimits.sliderMax
+      );
+
       const developableAreaHa = landSizeHa * (developablePct / 100);
       const calculatedLotsRaw = minimumLotSqm > 0 ? (developableAreaHa * 10000) / minimumLotSqm : 0;
       const adjustedLotsRaw = calculatedLotsRaw * projectProfile.lotYieldFactor;
-      const totalLots = Math.max(Math.floor(adjustedLotsRaw), 0);
+      const calculatedLots = Math.max(Math.floor(adjustedLotsRaw), 0);
+      const totalLots = lotMode === "manual" ? manualTotalLots : calculatedLots;
 
-      const grossRealisation = salePricePerLot * totalLots;
+      const mixEntries = [
+        { pct: clamp(mix1PctRaw, 0, 100), price: clamp(mix1PriceRaw, 0, Number.POSITIVE_INFINITY) },
+        { pct: clamp(mix2PctRaw, 0, 100), price: clamp(mix2PriceRaw, 0, Number.POSITIVE_INFINITY) },
+        { pct: clamp(mix3PctRaw, 0, 100), price: clamp(mix3PriceRaw, 0, Number.POSITIVE_INFINITY) }
+      ];
+      const lotMixPctTotalRaw = mixEntries.reduce((sum, entry) => sum + entry.pct, 0);
+      const lotMixScale = lotMixPctTotalRaw > 100 ? 100 / lotMixPctTotalRaw : 1;
+      const lotMixPctUsed = lotMixMode === "on" ? Math.min(lotMixPctTotalRaw, 100) : 0;
+      const blendedMixComponent = lotMixMode === "on"
+        ? mixEntries.reduce((sum, entry) => sum + ((entry.pct * lotMixScale) / 100) * entry.price, 0)
+        : 0;
+      const remainingBasePct = lotMixMode === "on" ? Math.max(0, 1 - (lotMixPctUsed / 100)) : 1;
+      const effectiveSalePricePerLot = lotMixMode === "on"
+        ? blendedMixComponent + (remainingBasePct * salePricePerLot)
+        : salePricePerLot;
+
+      const constructionCost = constructionCostMode === "perLot"
+        ? constructionCostPerLot * totalLots
+        : constructionCostTotal;
+
+      const grossRealisation = effectiveSalePricePerLot * totalLots;
       const gstNoMargin = grossRealisation * GST_RATE / (1 + GST_RATE);
       const gstMargin = Math.max(grossRealisation - marginPurchasePrice, 0) * GST_RATE / (1 + GST_RATE);
       const gstSalesRemittance = gstMode === "margin" ? gstMargin : gstNoMargin;
@@ -1154,25 +1590,47 @@
 
       const warnings = [];
       if (projectType !== "residential") {
-        const targetMarginBufferPp = projectProfile.targetMarginBuffer * 100;
         warnings.push(
-          `${projectProfile.name} profile is applied: lot yield x${toNumber(projectProfile.lotYieldFactor)}, selling costs x${toNumber(projectProfile.sellingCostMultiplier)}, construction x${toNumber(projectProfile.constructionCostMultiplier)}, soft costs x${toNumber(projectProfile.softCostMultiplier)}, finance x${toNumber(projectProfile.financeCostMultiplier)}, target margin +${toNumber(targetMarginBufferPp)}pp.`
+          `${projectProfile.name} profile is active and applies built-in lot yield and cost multipliers.`
         );
       }
-      if (landSizeHaRaw < 0 || minimumLotSqmRaw < 0 || salePricePerLotRaw < 0 || marginPurchasePriceRaw < 0 || titlesLegalsPerLotRaw < 0 || constructionCostRaw < 0 || professionalFeesRaw < 0 || headworksChargesRaw < 0 || councilFeesRaw < 0 || acquisitionCostsRaw < 0 || ratesTaxesRaw < 0 || interestFinanceCostsRaw < 0 || gstReclaimedRaw < 0) {
+      if (
+        landSizeHaRaw < 0 || minimumLotSqmRaw < 0 || manualTotalLotsRaw < 0 ||
+        salePricePerLotRaw < 0 || mix1PriceRaw < 0 || mix2PriceRaw < 0 || mix3PriceRaw < 0 ||
+        marginPurchasePriceRaw < 0 || titlesLegalsPerLotRaw < 0 ||
+        constructionCostTotalRaw < 0 || constructionCostPerLotRaw < 0 ||
+        professionalFeesRaw < 0 || headworksChargesRaw < 0 || councilFeesRaw < 0 ||
+        acquisitionCostsRaw < 0 || ratesTaxesRaw < 0 || interestFinanceCostsRaw < 0 ||
+        gstReclaimedRaw < 0
+      ) {
         warnings.push("Negative values are not allowed and were treated as zero.");
       }
-      if (developablePctRaw < 0 || developablePctRaw > 100) {
-        warnings.push("Developable area must stay between 0% and 100%.");
-      }
-      if (marketingPctRaw < 0 || marketingPctRaw > 100 || agentsPctRaw < 0 || agentsPctRaw > 100 || contingencyPctRaw < 0 || contingencyPctRaw > 100) {
+      if (
+        developablePctRaw < 0 || developablePctRaw > 100 ||
+        marketingPctRaw < 0 || marketingPctRaw > 100 ||
+        agentsPctRaw < 0 || agentsPctRaw > 100 ||
+        contingencyPctRaw < 0 || contingencyPctRaw > 100 ||
+        targetMarginPctRaw < 0 || targetMarginPctRaw > 100 ||
+        mix1PctRaw < 0 || mix1PctRaw > 100 ||
+        mix2PctRaw < 0 || mix2PctRaw > 100 ||
+        mix3PctRaw < 0 || mix3PctRaw > 100
+      ) {
         warnings.push("Percentage inputs must stay between 0% and 100%.");
       }
-      if (targetMarginPctRaw < 0 || targetMarginPctRaw > 100) {
-        warnings.push("Target margin must stay between 0% and 100%.");
+      if (lotMode === "manual" && manualTotalLots === 0) {
+        warnings.push("Manual lot mode is selected with 0 lots. Update Manual Total Lots to enable revenue and lot-based outputs.");
       }
-      if (totalLots === 0 && landSizeHa > 0 && developablePct > 0 && minimumLotSqm > 0) {
+      if (lotMode !== "manual" && totalLots === 0 && landSizeHa > 0 && developablePct > 0 && minimumLotSqm > 0) {
         warnings.push("Calculated lots are zero after project-type adjustments. Increase developable area or reduce minimum lot size.");
+      }
+      if (lotMixMode === "on" && lotMixPctTotalRaw > 100) {
+        warnings.push("Lot mix shares exceed 100% and were proportionally scaled down.");
+      }
+      if (lotMixMode === "on" && lotMixPctTotalRaw === 0) {
+        warnings.push("Lot mix mode is enabled but all lot mix shares are zero, so base sale price is used.");
+      }
+      if (constructionCostMode === "perLot" && totalLots === 0 && constructionCostPerLot > 0) {
+        warnings.push("Per-lot construction mode is selected, but total lots are currently 0 so total construction cost is $0.");
       }
       if (indicativeValue < 0) {
         warnings.push("Residual land value is negative with current assumptions.");
@@ -1183,106 +1641,378 @@
       if (!Number.isFinite(breakEvenSalePerLot) && totalLots > 0) {
         warnings.push("Break-even sale price cannot be solved with current selling-cost and GST settings.");
       }
-      updateWarnings(warnings);
 
-      // Update all outputs
-      setText("outLandValue", toCurrency(indicativeValue));
-      setText("outLandSizeHa", `${toNumber(landSizeHa)} ha`);
-      setText("outDevelopableArea", `${toNumber(developableAreaHa)} ha`);
+      return {
+        projectType,
+        projectProfile,
+        gstMode,
+        lotMode,
+        lotMixMode,
+        constructionCostMode,
+        landSizeHa,
+        developableAreaHa,
+        calculatedLots,
+        totalLots,
+        salePricePerLot,
+        effectiveSalePricePerLot,
+        lotMixPctTotalRaw,
+        remainingBasePct,
+        marginPurchasePrice,
+        titlesLegals,
+        grossRealisation,
+        marketingAndCommissions,
+        gstSalesRemittance,
+        sellingCostsTotal,
+        netRealisation,
+        marginForRisk,
+        afterRisk,
+        constructionCost,
+        constructionCostTotal,
+        constructionCostPerLot,
+        contingencyPct,
+        constructionCostsTotal,
+        afterConstruction,
+        purchaseHoldingTotal,
+        adjustedInterestFinanceCosts,
+        afterPurchaseHolding,
+        afterFinance,
+        gstReclaimed,
+        indicativeValue,
+        grossExSelected,
+        developmentProfit,
+        developmentMargin,
+        profitPerLot,
+        breakEvenSalePerLot,
+        valuePerHectare,
+        valuePerLot,
+        warnings
+      };
+    }
+
+    function renderAssumptionSnapshot(result) {
+      const rows = [
+        { label: "Project Type", value: result.projectProfile.name },
+        { label: "GST Mode", value: result.gstMode === "margin" ? "Margin Scheme" : "Standard GST" },
+        { label: "Lot Basis", value: result.lotMode === "manual" ? "Manual override" : "Calculated from land + lot size" },
+        { label: "Total Lots", value: toNumber(result.totalLots) },
+        { label: "Pricing Basis", value: result.lotMixMode === "on" ? "Lot mix blended pricing" : "Single sale price per lot" },
+        { label: "Effective Sale Price / Lot", value: toCurrency(result.effectiveSalePricePerLot) },
+        { label: "Construction Basis", value: result.constructionCostMode === "perLot" ? "Per lot" : "Total project" },
+        {
+          label: "Construction Input",
+          value: result.constructionCostMode === "perLot"
+            ? `${toCurrency(result.constructionCostPerLot)} / lot`
+            : toCurrency(result.constructionCostTotal)
+        },
+        { label: "Contingency", value: toPercent(result.contingencyPct * 100) },
+        {
+          label: "Finance Basis",
+          value: "Manual finance input"
+        },
+        { label: "Generated", value: nowDisplayString() }
+      ];
+      const node = byId("assumptionSnapshot");
+      if (!node) return;
+      node.innerHTML = rows.map((row) => (
+        `<div class="results-row"><span class="label">${row.label}</span><span class="value">${row.value}</span></div>`
+      )).join("");
+    }
+
+    function renderScenarioComparison() {
+      const scenarioResults = {};
+      for (const key of SCENARIO_KEYS) {
+        const entry = scenarioStore[key];
+        scenarioResults[key] = entry?.values ? calculateFeasibility(entry.values) : null;
+      }
+
+      const rows = [
+        {
+          key: "Residual Land Value",
+          format: (result) => toCurrency(result.indicativeValue)
+        },
+        {
+          key: "Feasibility Margin on Cost",
+          format: (result) => toPercent(result.developmentMargin)
+        },
+        {
+          key: "Break-even Sale / Lot",
+          format: (result) => Number.isFinite(result.breakEvenSalePerLot) ? toCurrency(result.breakEvenSalePerLot) : "N/A"
+        },
+        {
+          key: "Total Lots",
+          format: (result) => toNumber(result.totalLots)
+        },
+        {
+          key: "Gross Realisation",
+          format: (result) => toCurrency(result.grossRealisation)
+        }
+      ];
+
+      const scenarioCell = (scenarioKey, formatter) => {
+        const scenarioResult = scenarioResults[scenarioKey];
+        return scenarioResult ? formatter(scenarioResult) : "—";
+      };
+
+      const node = byId("scenarioComparisonRows");
+      if (!node) return;
+      node.innerHTML = rows.map((row) => (
+        `<div class="report-row">
+          <span class="key">${row.key}</span>
+          <span class="cell">${scenarioCell("base", row.format)}</span>
+          <span class="cell">${scenarioCell("upside", row.format)}</span>
+          <span class="cell">${scenarioCell("downside", row.format)}</span>
+        </div>`
+      )).join("");
+    }
+
+    function renderSensitivity(baseState, baseResult) {
+      const sensitivityPctRaw = readStateNumber(baseState, "sensitivityPct");
+      const sensitivityPct = clamp(sensitivityPctRaw, 1, 50) / 100;
+      setText("sensitivityHeader", `Variable (±${toNumber(sensitivityPct * 100)}%)`);
+
+      const variableDefinitions = [
+        {
+          label: "Sale Price per Lot",
+          apply: (targetState, factor) => {
+            targetState.salePricePerLot = String(clamp(readStateNumber(baseState, "salePricePerLot") * factor, 0, Number.POSITIVE_INFINITY));
+            if ((baseState.lotMixMode ?? "off") === "on") {
+              targetState.mix1Price = String(clamp(readStateNumber(baseState, "mix1Price") * factor, 0, Number.POSITIVE_INFINITY));
+              targetState.mix2Price = String(clamp(readStateNumber(baseState, "mix2Price") * factor, 0, Number.POSITIVE_INFINITY));
+              targetState.mix3Price = String(clamp(readStateNumber(baseState, "mix3Price") * factor, 0, Number.POSITIVE_INFINITY));
+            }
+          }
+        },
+        {
+          label: "Construction Cost",
+          apply: (targetState, factor) => {
+            if ((baseState.constructionCostMode ?? "total") === "perLot") {
+              targetState.constructionCostPerLotInput = String(clamp(readStateNumber(baseState, "constructionCostPerLotInput") * factor, 0, CONSTRUCTION_MODES.perLot.sliderMax));
+            } else {
+              targetState.constructionCostTotalInput = String(clamp(readStateNumber(baseState, "constructionCostTotalInput") * factor, 0, CONSTRUCTION_MODES.total.sliderMax));
+            }
+          }
+        },
+        {
+          label: "Total Lots",
+          apply: (targetState, factor) => {
+            const adjustedLots = Math.max(Math.round(baseResult.totalLots * factor), 0);
+            targetState.lotMode = "manual";
+            targetState.manualTotalLots = String(adjustedLots);
+          }
+        },
+        {
+          label: "Finance Cost",
+          apply: (targetState, factor) => {
+            targetState.interestFinanceCosts = String(clamp(readStateNumber(baseState, "interestFinanceCosts") * factor, 0, Number.POSITIVE_INFINITY));
+          }
+        }
+      ];
+
+      const rows = variableDefinitions.map((definition) => {
+        const downsideState = { ...baseState };
+        const upsideState = { ...baseState };
+        definition.apply(downsideState, 1 - sensitivityPct);
+        definition.apply(upsideState, 1 + sensitivityPct);
+
+        const downsideResult = calculateFeasibility(downsideState);
+        const upsideResult = calculateFeasibility(upsideState);
+        return {
+          label: definition.label,
+          downside: toCurrency(downsideResult.indicativeValue),
+          base: toCurrency(baseResult.indicativeValue),
+          upside: toCurrency(upsideResult.indicativeValue)
+        };
+      });
+
+      const node = byId("sensitivityRows");
+      if (!node) return;
+      node.innerHTML = rows.map((row) => (
+        `<div class="report-row">
+          <span class="key">${row.label}</span>
+          <span class="cell">${row.downside}</span>
+          <span class="cell">${row.base}</span>
+          <span class="cell">${row.upside}</span>
+        </div>`
+      )).join("");
+    }
+
+    function update() {
+      syncModeInputState();
+      const state = collectPersistedState();
+      const result = calculateFeasibility(state);
+
+      // Construction display panel
+      setText(
+        "constructionDisplay",
+        result.constructionCostMode === "perLot"
+          ? `${toCurrency(result.constructionCostPerLot)} / lot`
+          : toCurrency(result.constructionCostTotal)
+      );
+      setText(
+        "constructionDerivedDisplay",
+        result.constructionCostMode === "perLot"
+          ? `Total at ${toNumber(result.totalLots)} lots: ${toCurrency(result.constructionCost)}`
+          : result.totalLots > 0
+            ? `Equivalent per lot at ${toNumber(result.totalLots)} lots: ${toCurrency(result.constructionCost / result.totalLots)}`
+            : "Equivalent per lot: N/A (0 lots)"
+      );
+
+      const constructionCostInput = byId("constructionCostInput");
+      if (constructionCostInput) constructionCostInput.value = String(result.constructionCost);
+      const totalInput = byId("constructionCostTotalInput");
+      if (totalInput) totalInput.value = String(result.constructionCostTotal);
+      const perLotInput = byId("constructionCostPerLotInput");
+      if (perLotInput) perLotInput.value = String(result.constructionCostPerLot);
+
+      // Output header
+      setText("outLandValue", toCurrency(result.indicativeValue));
+      setText("reportGeneratedAt", `Generated: ${nowDisplayString()}`);
+
+      // Project Overview
+      setText("outLandSizeHa", `${toNumber(result.landSizeHa)} ha`);
+      setText("outDevelopableArea", `${toNumber(result.developableAreaHa)} ha`);
       setText(
         "outTotalLotsLabel",
-        projectType === "residential"
-          ? "Calculated Lots (from area + lot size)"
-          : `Calculated Lots (${projectProfile.name} profile-adjusted)`
+        result.lotMode === "manual"
+          ? "Total Lots (manual override)"
+          : result.projectType === "residential"
+            ? "Calculated Lots (from area + lot size)"
+            : `Calculated Lots (${result.projectProfile.name} profile-adjusted)`
       );
-      setText("outTotalLots", toNumber(totalLots));
-      setText("outSalePricePerLot", toCurrency(salePricePerLot));
+      setText("outTotalLots", toNumber(result.totalLots));
+      setText(
+        "outSalePricePerLotLabel",
+        result.lotMixMode === "on"
+          ? "Sale Price per Lot (incl GST, blended mix)"
+          : "Sale Price per Lot (incl GST)"
+      );
+      setText("outSalePricePerLot", toCurrency(result.effectiveSalePricePerLot));
 
-      // Cashflow Feasibility
-      setText("outGrossRealisation", toCurrency(grossRealisation));
-      setText("outTitlesLegals", toCurrency(titlesLegals));
-      setText("outMarketingCommissions", toCurrency(marketingAndCommissions));
-      setText("outGstSalesRemittance", toCurrency(gstSalesRemittance));
-      setText("outSellingCostsTotal", toCurrency(sellingCostsTotal));
-      setText("outNetRealisation", toCurrency(netRealisation));
-      setText("outMarginForRisk", toCurrency(marginForRisk));
-      setText("outAfterRisk", toCurrency(afterRisk));
-      setText("outConstructionCostsTotal", toCurrency(constructionCostsTotal));
-      setText("outAfterConstruction", toCurrency(afterConstruction));
-      setText("outPurchaseHoldingTotal", toCurrency(purchaseHoldingTotal));
-      setText("outAfterPurchaseHolding", toCurrency(afterPurchaseHolding));
-      setText("outInterestFinance", toCurrency(adjustedInterestFinanceCosts));
-      setText("outAfterFinance", toCurrency(afterFinance));
-      setText("outGstReclaimedDisplay", toCurrency(gstReclaimed));
-      setText("outIndicativeValue", toCurrency(indicativeValue));
+      // Cashflow
+      setText("outGrossRealisation", toCurrency(result.grossRealisation));
+      setText("outTitlesLegals", toCurrency(result.titlesLegals));
+      setText("outMarketingCommissions", toCurrency(result.marketingAndCommissions));
+      setText("outGstSalesRemittance", toCurrency(result.gstSalesRemittance));
+      setText("outSellingCostsTotal", toCurrency(result.sellingCostsTotal));
+      setText("outNetRealisation", toCurrency(result.netRealisation));
+      setText("outMarginForRisk", toCurrency(result.marginForRisk));
+      setText("outAfterRisk", toCurrency(result.afterRisk));
+      setText("outConstructionCostsTotal", toCurrency(result.constructionCostsTotal));
+      setText("outAfterConstruction", toCurrency(result.afterConstruction));
+      setText("outPurchaseHoldingTotal", toCurrency(result.purchaseHoldingTotal));
+      setText("outAfterPurchaseHolding", toCurrency(result.afterPurchaseHolding));
+      setText("outInterestFinance", toCurrency(result.adjustedInterestFinanceCosts));
+      setText("outAfterFinance", toCurrency(result.afterFinance));
+      setText("outGstReclaimedDisplay", toCurrency(result.gstReclaimed));
+      setText("outIndicativeValue", toCurrency(result.indicativeValue));
 
-      // Key Ratios
+      // Ratios
       setText(
         "outGrossExLabel",
-        gstMode === "margin"
+        result.gstMode === "margin"
           ? "Gross Realisation Ex GST (Margin Scheme)"
           : "Gross Realisation Ex GST (Standard GST)"
       );
-      setText("outGrossExSelected", toCurrency(grossExSelected));
-      setText("outProfit", toCurrency(developmentProfit));
-      setText("outMargin", toPercent(developmentMargin));
-      setText("outProfitPerLot", toCurrency(profitPerLot));
+      setText("outGrossExSelected", toCurrency(result.grossExSelected));
+      setText("outProfit", toCurrency(result.developmentProfit));
+      setText("outMargin", toPercent(result.developmentMargin));
+      setText("outProfitPerLot", toCurrency(result.profitPerLot));
       setText(
         "outBreakEvenSalePerLot",
-        Number.isFinite(breakEvenSalePerLot) ? toCurrency(breakEvenSalePerLot) : "N/A"
+        Number.isFinite(result.breakEvenSalePerLot) ? toCurrency(result.breakEvenSalePerLot) : "N/A"
       );
-      setText("outValuePerHectare", toCurrency(valuePerHectare));
-      setText("outValuePerLot", toCurrency(valuePerLot));
+      setText("outValuePerHectare", toCurrency(result.valuePerHectare));
+      setText("outValuePerLot", toCurrency(result.valuePerLot));
 
-      // Color the main value based on positive/negative
-      const el = byId('outLandValue');
-      if (el) {
-        el.style.color = indicativeValue < 0 ? '#ff6b6b' : 'var(--accent)';
+      // Report sections
+      renderAssumptionSnapshot(result);
+      renderScenarioComparison();
+      renderSensitivity(state, result);
+      updateWarnings(result.warnings);
+
+      // Positive / negative color
+      const headline = byId("outLandValue");
+      if (headline) {
+        headline.style.color = result.indicativeValue < 0 ? "#ff6b6b" : "var(--accent)";
       }
 
       saveState();
     }
 
-    function loadValues(values) {
-      for (const [id, val] of Object.entries(values)) {
-        const node = byId(id);
-        if (node) {
-          node.value = val;
-        }
-      }
-      
-      // Update button groups
-      updateButtonGroup('gstModeButtons', String(values.gstMode ?? byId("gstMode").value));
-      updateButtonGroup('marginButtons', String(values.targetMarginPct ?? byId("targetMarginPct").value));
-      
-      // Update slider
-      const slider = byId('constructionSlider');
-      if (slider && values.constructionCostInput !== undefined) {
-        slider.value = values.constructionCostInput;
-        updateSliderProgress(slider);
-      }
-      
-      syncModeInputState();
-      update();
-    }
-
     function updateButtonGroup(groupId, value) {
       const group = byId(groupId);
       if (!group) return;
-      
-      const buttons = group.querySelectorAll('button');
-      buttons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.value === value);
+      group.querySelectorAll("button").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.value === value);
       });
+    }
+
+    function loadValues(values) {
+      for (const [id, val] of Object.entries(values)) {
+        const node = byId(id);
+        if (node) node.value = val;
+      }
+
+      if (values.constructionCostTotalInput === undefined && values.constructionCostInput !== undefined) {
+        const totalInput = byId("constructionCostTotalInput");
+        if (totalInput) totalInput.value = values.constructionCostInput;
+      }
+
+      const modeInputs = [
+        ["constructionCostMode", ["total", "perLot"], "total"],
+        ["lotMode", ["calculated", "manual"], "calculated"],
+        ["lotMixMode", ["off", "on"], "off"]
+      ];
+      for (const [id, allowedValues, fallback] of modeInputs) {
+        const node = byId(id);
+        if (node && !allowedValues.includes(node.value)) {
+          node.value = fallback;
+        }
+      }
+
+      updateButtonGroup("gstModeButtons", String(values.gstMode ?? byId("gstMode").value));
+      updateButtonGroup("marginButtons", String(values.targetMarginPct ?? byId("targetMarginPct").value));
+      updateButtonGroup("constructionModeButtons", String(values.constructionCostMode ?? byId("constructionCostMode").value));
+      updateButtonGroup("lotModeButtons", String(values.lotMode ?? byId("lotMode").value));
+      updateButtonGroup("lotMixButtons", String(values.lotMixMode ?? byId("lotMixMode").value));
+
+      syncModeInputState();
+      syncConstructionSliderState();
+      update();
     }
 
     function resetCalculator() {
       try {
         localStorage.removeItem(STORAGE_KEY);
       } catch (error) {
-        // Ignore storage failures (private mode, quota, etc.).
+        // Ignore storage failures.
       }
       loadValues(clearedDefaults);
+    }
+
+    function saveScenario(key) {
+      if (!SCENARIO_KEYS.includes(key)) return;
+      scenarioStore[key] = {
+        values: collectPersistedState(),
+        savedAt: new Date().toISOString()
+      };
+      saveScenarioStore(scenarioStore);
+      renderScenarioComparison();
+    }
+
+    function loadScenario(key) {
+      const entry = scenarioStore[key];
+      if (!entry || !entry.values) {
+        alert(`${SCENARIO_LABELS[key]} scenario is empty. Save it first.`);
+        return;
+      }
+      loadValues({ ...clearedDefaults, ...entry.values });
+    }
+
+    function clearScenarios() {
+      scenarioStore = makeEmptyScenarioStore();
+      saveScenarioStore(scenarioStore);
+      renderScenarioComparison();
     }
 
     async function downloadPdf() {
@@ -1387,61 +2117,68 @@
       }
     }
 
-    // Event Listeners
+    function setupButtonGroup(groupId, hiddenInputId, onChange) {
+      const group = byId(groupId);
+      if (!group) return;
+      group.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("click", () => {
+          group.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
+          button.classList.add("active");
+          const hiddenInput = byId(hiddenInputId);
+          if (hiddenInput) hiddenInput.value = button.dataset.value;
+          if (typeof onChange === "function") onChange(button.dataset.value);
+          update();
+        });
+      });
+    }
+
+    // Event listeners
+    setupInputHints();
+
     document.querySelectorAll("input, select").forEach((node) => {
+      if (node.id === "constructionSlider" || node.type === "hidden") return;
       node.addEventListener("input", () => {
-        syncModeInputState();
         update();
       });
     });
 
-    // GST Mode Button Group
-    const gstModeButtons = byId('gstModeButtons');
-    if (gstModeButtons) {
-      gstModeButtons.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          gstModeButtons.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          byId('gstMode').value = btn.dataset.value;
-          syncModeInputState();
-          update();
-        });
-      });
-    }
+    setupButtonGroup("gstModeButtons", "gstMode");
+    setupButtonGroup("marginButtons", "targetMarginPct");
+    setupButtonGroup("lotModeButtons", "lotMode");
+    setupButtonGroup("lotMixButtons", "lotMixMode");
+    setupButtonGroup("constructionModeButtons", "constructionCostMode", () => {
+      syncConstructionSliderState();
+    });
 
-    // Margin Button Group
-    const marginButtons = byId('marginButtons');
-    if (marginButtons) {
-      marginButtons.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          marginButtons.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          byId('targetMarginPct').value = btn.dataset.value;
-          update();
-        });
-      });
-    }
-
-    // Construction Cost Slider
-    const constructionSlider = byId('constructionSlider');
+    const constructionSlider = byId("constructionSlider");
     if (constructionSlider) {
-      constructionSlider.addEventListener('input', () => {
-        const hiddenInput = byId('constructionCostInput');
-        if (hiddenInput) {
-          hiddenInput.value = constructionSlider.value;
-        }
+      constructionSlider.addEventListener("input", () => {
+        const mode = getConstructionMode();
+        const targetId = mode === "perLot" ? "constructionCostPerLotInput" : "constructionCostTotalInput";
+        const hiddenInput = byId(targetId);
+        if (hiddenInput) hiddenInput.value = constructionSlider.value;
         updateSliderProgress(constructionSlider);
         update();
       });
-      // Initialize slider progress
-      updateSliderProgress(constructionSlider);
+      syncConstructionSliderState();
     }
 
-    // Reset button
-    byId("resetDefaults").addEventListener("click", resetCalculator);
-    byId("downloadPdf").addEventListener("click", downloadPdf);
+    document.querySelectorAll("[data-save-scenario]").forEach((button) => {
+      button.addEventListener("click", () => {
+        saveScenario(button.dataset.saveScenario);
+      });
+    });
 
-    // Load saved values on start, otherwise use cleared defaults.
+    document.querySelectorAll("[data-load-scenario]").forEach((button) => {
+      button.addEventListener("click", () => {
+        loadScenario(button.dataset.loadScenario);
+      });
+    });
+
+    byId("clearScenarios")?.addEventListener("click", clearScenarios);
+    byId("resetDefaults")?.addEventListener("click", resetCalculator);
+    byId("downloadPdf")?.addEventListener("click", downloadPdf);
+
     const savedState = loadSavedState();
     loadValues(savedState ? { ...clearedDefaults, ...savedState } : clearedDefaults);
   </script>
