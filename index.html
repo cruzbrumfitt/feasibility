@@ -648,15 +648,15 @@
           <div class="input-group">
             <div class="input-row">
               <label for="landSizeHa">Land Size (ha)</label>
-              <input id="landSizeHa" name="landSizeHa" type="number" min="0" step="0.01" placeholder="e.g. 2.5">
+              <input id="landSizeHa" name="landSizeHa" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 2.5">
             </div>
             <div class="input-row">
               <label for="developablePct">Developable Area (%)</label>
-              <input id="developablePct" name="developablePct" type="number" min="0" max="100" step="0.01" placeholder="e.g. 65">
+              <input id="developablePct" name="developablePct" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 65">
             </div>
             <div class="input-row">
               <label for="minimumLotSqm">Minimum Lot Size (sqm)</label>
-              <input id="minimumLotSqm" name="minimumLotSqm" type="number" min="1" step="1" placeholder="e.g. 450">
+              <input id="minimumLotSqm" name="minimumLotSqm" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 450">
             </div>
           </div>
         </div>
@@ -666,11 +666,11 @@
           <div class="input-group">
             <div class="input-row">
               <label for="salePricePerLot">Price including GST ($)</label>
-              <input id="salePricePerLot" name="salePricePerLot" type="number" min="0" step="0.01" placeholder="e.g. 350000">
+              <input id="salePricePerLot" name="salePricePerLot" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 350,000">
             </div>
             <div class="input-row" id="marginPurchasePriceRow">
               <label for="marginPurchasePrice">Purchase Price for Margin GST ($)</label>
-              <input id="marginPurchasePrice" name="marginPurchasePrice" type="number" min="0" step="0.01" placeholder="e.g. 1500000">
+              <input id="marginPurchasePrice" name="marginPurchasePrice" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 1,500,000">
             </div>
           </div>
         </div>
@@ -683,6 +683,12 @@
             <button type="button" class="active" data-value="22.46">22.5%</button>
             <button type="button" data-value="25">25%</button>
             <button type="button" data-value="30">30%</button>
+          </div>
+          <div class="input-group" style="margin-top: 12px;">
+            <div class="input-row">
+              <label for="customTargetMarginPct">Custom Target Margin (%)</label>
+              <input id="customTargetMarginPct" name="customTargetMarginPct" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 18.5">
+            </div>
           </div>
           <input type="hidden" id="targetMarginPct" value="22.46">
         </div>
@@ -714,7 +720,7 @@
           <div class="input-group" style="margin-top: 12px;">
             <div class="input-row">
               <label for="contingencyPct">Contingency (%)</label>
-              <input id="contingencyPct" name="contingencyPct" type="number" min="0" step="1" placeholder="e.g. 10">
+              <input id="contingencyPct" name="contingencyPct" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 10">
             </div>
           </div>
         </div>
@@ -725,15 +731,15 @@
           <div class="input-group">
             <div class="input-row">
               <label for="titlesLegalsPerLot">Titles & Legals per Lot ($)</label>
-              <input id="titlesLegalsPerLot" name="titlesLegalsPerLot" type="number" min="0" step="100" placeholder="e.g. 5000">
+              <input id="titlesLegalsPerLot" name="titlesLegalsPerLot" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 5,000">
             </div>
             <div class="input-row">
               <label for="marketingPct">Marketing Allowance (%)</label>
-              <input id="marketingPct" name="marketingPct" type="number" min="0" step="0.1" placeholder="e.g. 2.5">
+              <input id="marketingPct" name="marketingPct" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 2.5">
             </div>
             <div class="input-row">
               <label for="agentsPct">Agent Commission (%)</label>
-              <input id="agentsPct" name="agentsPct" type="number" min="0" step="0.1" placeholder="e.g. 2.0">
+              <input id="agentsPct" name="agentsPct" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 2.0">
             </div>
           </div>
         </div>
@@ -744,15 +750,15 @@
           <div class="input-group">
             <div class="input-row">
               <label for="professionalFees">Professional Fees ($)</label>
-              <input id="professionalFees" name="professionalFees" type="number" min="0" step="1000" placeholder="e.g. 180000">
+              <input id="professionalFees" name="professionalFees" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 180,000">
             </div>
             <div class="input-row">
               <label for="headworksCharges">Council Headworks ($)</label>
-              <input id="headworksCharges" name="headworksCharges" type="number" min="0" step="1000" placeholder="e.g. 250000">
+              <input id="headworksCharges" name="headworksCharges" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 250,000">
             </div>
             <div class="input-row">
               <label for="councilFees">Council Fees ($)</label>
-              <input id="councilFees" name="councilFees" type="number" min="0" step="1000" placeholder="e.g. 75000">
+              <input id="councilFees" name="councilFees" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 75,000">
             </div>
           </div>
         </div>
@@ -763,15 +769,15 @@
           <div class="input-group">
             <div class="input-row">
               <label for="acquisitionCosts">Acquisition Costs ($)</label>
-              <input id="acquisitionCosts" name="acquisitionCosts" type="number" min="0" step="1000" placeholder="e.g. 120000">
+              <input id="acquisitionCosts" name="acquisitionCosts" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 120,000">
             </div>
             <div class="input-row">
               <label for="ratesTaxes">Rates & Taxes ($)</label>
-              <input id="ratesTaxes" name="ratesTaxes" type="number" min="0" step="1000" placeholder="e.g. 30000">
+              <input id="ratesTaxes" name="ratesTaxes" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 30,000">
             </div>
             <div class="input-row">
               <label for="interestFinanceCosts">Interest / Finance ($)</label>
-              <input id="interestFinanceCosts" name="interestFinanceCosts" type="number" min="0" step="1000" placeholder="e.g. 220000">
+              <input id="interestFinanceCosts" name="interestFinanceCosts" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 220,000">
             </div>
           </div>
         </div>
@@ -782,7 +788,7 @@
           <div class="input-group">
             <div class="input-row">
               <label for="gstReclaimed">GST Reclaimed ($)</label>
-              <input id="gstReclaimed" name="gstReclaimed" type="number" min="0" step="1000" placeholder="e.g. 90000">
+              <input id="gstReclaimed" name="gstReclaimed" type="text" inputmode="decimal" data-number-format="true" placeholder="e.g. 90,000">
             </div>
           </div>
         </div>
@@ -1157,15 +1163,86 @@
       return document.getElementById(id);
     }
 
+    function sanitizeNumericString(value) {
+      if (typeof value !== "string") return "";
+      let sanitized = value.replace(/,/g, "").replace(/[^\d.-]/g, "");
+      sanitized = sanitized.replace(/(?!^)-/g, "");
+
+      const decimalIndex = sanitized.indexOf(".");
+      if (decimalIndex !== -1) {
+        sanitized = `${sanitized.slice(0, decimalIndex + 1)}${sanitized.slice(decimalIndex + 1).replace(/\./g, "")}`;
+      }
+
+      return sanitized;
+    }
+
+    function formatGroupedNumericString(value) {
+      const sanitized = sanitizeNumericString(value);
+      if (!sanitized) return "";
+      if (sanitized === "-" || sanitized === "." || sanitized === "-.") return sanitized;
+
+      const isNegative = sanitized.startsWith("-");
+      const unsigned = isNegative ? sanitized.slice(1) : sanitized;
+      const hasDecimal = unsigned.includes(".");
+      const [rawIntegerPart, fractionalPart = ""] = unsigned.split(".");
+      const normalizedInteger = rawIntegerPart.replace(/^0+(?=\d)/, "") || "0";
+      const groupedInteger = normalizedInteger.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      const prefix = isNegative ? "-" : "";
+
+      if (hasDecimal) {
+        return `${prefix}${groupedInteger}.${fractionalPart}`;
+      }
+
+      return `${prefix}${groupedInteger}`;
+    }
+
+    function countDigitsBeforeCaret(value, caretPosition) {
+      return value.slice(0, caretPosition).replace(/\D/g, "").length;
+    }
+
+    function setCaretFromDigitCount(input, digitCount) {
+      let digitsSeen = 0;
+      let target = input.value.length;
+
+      for (let index = 0; index < input.value.length; index += 1) {
+        if (/\d/.test(input.value[index])) {
+          digitsSeen += 1;
+        }
+        if (digitsSeen >= digitCount) {
+          target = index + 1;
+          break;
+        }
+      }
+
+      if (digitCount === 0) target = 0;
+      input.setSelectionRange(target, target);
+    }
+
+    function formatNumberInput(input, preserveCaret = false) {
+      if (!input) return;
+
+      const previousValue = input.value;
+      const previousCaret = preserveCaret ? (input.selectionStart ?? previousValue.length) : 0;
+      const digitsBeforeCaret = preserveCaret ? countDigitsBeforeCaret(previousValue, previousCaret) : 0;
+      const formattedValue = formatGroupedNumericString(previousValue);
+
+      if (formattedValue === previousValue) return;
+
+      input.value = formattedValue;
+      if (preserveCaret && document.activeElement === input) {
+        setCaretFromDigitCount(input, digitsBeforeCaret);
+      }
+    }
+
     function readNumber(id) {
       const el = byId(id);
       if (!el) return 0;
-      const value = Number.parseFloat(el.value);
+      const value = Number.parseFloat(sanitizeNumericString(el.value));
       return Number.isFinite(value) ? value : 0;
     }
 
     function readStateNumber(state, key) {
-      const value = Number.parseFloat(state[key]);
+      const value = Number.parseFloat(sanitizeNumericString(String(state[key] ?? "")));
       return Number.isFinite(value) ? value : 0;
     }
 
@@ -1269,6 +1346,18 @@
       setText("constructionRangeMin", config.rangeMinText);
       setText("constructionRangeMax", config.rangeMaxText);
       updateSliderProgress(slider);
+    }
+
+    function syncTargetMarginInput() {
+      const targetMarginInput = byId("customTargetMarginPct");
+      const hiddenTargetMarginInput = byId("targetMarginPct");
+      if (!targetMarginInput || !hiddenTargetMarginInput) return;
+
+      const currentValue = hiddenTargetMarginInput.value;
+      if (targetMarginInput.value !== currentValue) {
+        targetMarginInput.value = currentValue;
+        formatNumberInput(targetMarginInput);
+      }
     }
 
     function setupInputHints() {
@@ -1953,6 +2042,10 @@
         if (node) node.value = val;
       }
 
+      document.querySelectorAll("input[data-number-format='true']").forEach((input) => {
+        formatNumberInput(input);
+      });
+
       if (values.constructionCostTotalInput === undefined && values.constructionCostInput !== undefined) {
         const totalInput = byId("constructionCostTotalInput");
         if (totalInput) totalInput.value = values.constructionCostInput;
@@ -1976,6 +2069,7 @@
       updateButtonGroup("lotModeButtons", String(values.lotMode ?? byId("lotMode").value));
       updateButtonGroup("lotMixButtons", String(values.lotMixMode ?? byId("lotMixMode").value));
 
+      syncTargetMarginInput();
       syncModeInputState();
       syncConstructionSliderState();
       update();
@@ -2136,19 +2230,37 @@
     setupInputHints();
 
     document.querySelectorAll("input, select").forEach((node) => {
-      if (node.id === "constructionSlider" || node.type === "hidden") return;
+      if (node.id === "constructionSlider" || node.id === "customTargetMarginPct" || node.type === "hidden") return;
       node.addEventListener("input", () => {
+        if (node.matches("input[data-number-format='true']")) {
+          formatNumberInput(node, true);
+        }
         update();
       });
     });
 
     setupButtonGroup("gstModeButtons", "gstMode");
-    setupButtonGroup("marginButtons", "targetMarginPct");
+    setupButtonGroup("marginButtons", "targetMarginPct", () => {
+      syncTargetMarginInput();
+    });
     setupButtonGroup("lotModeButtons", "lotMode");
     setupButtonGroup("lotMixButtons", "lotMixMode");
     setupButtonGroup("constructionModeButtons", "constructionCostMode", () => {
       syncConstructionSliderState();
     });
+
+    const customTargetMarginInput = byId("customTargetMarginPct");
+    if (customTargetMarginInput) {
+      customTargetMarginInput.addEventListener("input", () => {
+        formatNumberInput(customTargetMarginInput, true);
+        const hiddenTargetMarginInput = byId("targetMarginPct");
+        if (hiddenTargetMarginInput) {
+          hiddenTargetMarginInput.value = sanitizeNumericString(customTargetMarginInput.value);
+        }
+        updateButtonGroup("marginButtons", hiddenTargetMarginInput?.value ?? "");
+        update();
+      });
+    }
 
     const constructionSlider = byId("constructionSlider");
     if (constructionSlider) {
